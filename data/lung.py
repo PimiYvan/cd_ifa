@@ -97,6 +97,7 @@ class DatasetLung(Dataset):
         for cat in self.categories:
             img_paths = sorted([path for path in glob.glob('%s/*' % self.ann_path)])
             for img_path in img_paths:
-                if os.path.basename(img_path).split('.')[1] == 'png':
+                base_name = os.path.basename(img_path)
+                if "MCUCXR" not in base_name and base_name.split('.')[1] == 'png':
                     img_metadata_classwise[cat] += [img_path]
         return img_metadata_classwise

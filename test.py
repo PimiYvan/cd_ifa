@@ -103,7 +103,7 @@ def main():
             if args.shot == 1:
                 checkpoint_path = './trained_models/deepglobe/resnet50_1shot_avg_50.63.pth'
             if args.shot == 5:
-                checkpoint_path = './trained_models/deepglobe/esnet50_5shot_avg_58.76.pth'
+                checkpoint_path = './trained_models/deepglobe/resnet50_5shot_avg_58.76.pth'
     if args.dataset == 'isic':
         if args.backbone == 'resnet50':
             if args.shot == 1:

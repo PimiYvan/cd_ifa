@@ -1,0 +1,21 @@
+
+salloc --time=1:0:0 --mem=36G --ntasks=2 --account=def-menna --gres=gpu:2 --nodes=1
+
+
+resnet50_1shot_avg_77.07.pth
+
+
+python -W ignore ifa.py  --dataset fss --data-root ./dataset --backbone resnet50 --batch-size 6 --shot 1 --refine --lr 0.0005
+
+git clone https://github.com/albumentations-team/albumentations.git
+pip install scikit-build numpy scipy
+pip install --upgrade cython
+pip install "cython<3.0.0" && pip install --no-build-isolation pyyaml==6.0
+pip install scikit-image
+pip install pydantic-core
+pip install annotated-types
+pip install opencv-contrib-python-headless
+pip install opencv-python-headless
+
+pip install opencv_python
+python setup.py install

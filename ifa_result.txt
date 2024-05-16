@@ -1,0 +1,8 @@
+result IFA 
+Dataset             1 shot/                        5shot 
+FSS                 81.38                          83.33
+lung                74.59                          74.59
+DEEPGLOBE           50.55                          58.83
+ISIC                -----                          -----
+
+

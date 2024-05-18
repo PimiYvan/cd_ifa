@@ -119,7 +119,8 @@ def main():
     if args.dataset == 'fss':
         if args.backbone == 'resnet50':
             if args.shot == 1:
-                checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
+                # checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
+                checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.20.pth'
             if args.shot == 5:
                 checkpoint_path = './trained_models/fss/resnet50_5shot_avg_82.36.pth'
 

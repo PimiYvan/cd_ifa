@@ -1,8 +1,9 @@
 20284238
 20318496
+
 cedar 
 31816686 
-
+31960791
 
 
 sbatch train_script.sh

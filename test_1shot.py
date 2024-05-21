@@ -44,7 +44,7 @@ def parse_args():
     return args
 
 
-def evaluate(model, dataloader, args):
+def evaluate(model_one_shot, model_five_shot, dataloader, args):
     tbar = tqdm(dataloader)
 
     if args.dataset == 'fss':
@@ -59,6 +59,7 @@ def evaluate(model, dataloader, args):
     metric = mIOU(num_classes)
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
+        print(img_s_list.shape, img_q.shape, 'check size')
 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)
@@ -76,7 +77,7 @@ def evaluate(model, dataloader, args):
         cls = cls + 1
 
         with torch.no_grad():
-            pred = model(img_s_list, mask_s_list, img_q, None)[0]
+            pred = model_five_shot(img_s_list, mask_s_list, img_q, None)[0]
             pred = torch.argmax(pred, dim=1)
 
         pred[pred == 1] = cls
@@ -95,7 +96,8 @@ def main():
     FSSDataset.initialize(img_size=400, datapath=args.data_root)
     testloader = FSSDataset.build_dataloader(args.dataset, args.batch_size, 4, '0', 'val', args.shot)
 
-    model = IFA_MatchingNet(args.backbone, args.refine)
+    model_one_shot = IFA_MatchingNet(args.backbone, args.refine)
+    model_five_shot = IFA_MatchingNet(args.backbone, args.refine)
 
     ### Please modify the following paths with your model path if needed.
     if args.dataset == 'deepglobe':
@@ -123,25 +125,32 @@ def main():
                 checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.20.pth'
             if args.shot == 5:
                 checkpoint_path = './trained_models/fss/resnet50_5shot_avg_82.36.pth'
-
+    
+    checkpoint_one_shot_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
 
     print('Evaluating model:', checkpoint_path)
 
     checkpoint = torch.load(checkpoint_path)
-    model.load_state_dict(checkpoint)
+    model_five_shot.load_state_dict(checkpoint)
 
-    print('\nParams: %.1fM' % count_params(model))
+    checkpoint_one_shot = torch.load(checkpoint_one_shot_path)
+    model_one_shot.load_state_dict(checkpoint_one_shot)
 
-    best_model = DataParallel(model).cuda()
+    print('\nParams: %.1fM' % count_params(model_one_shot))
+
+    best_one_shot_model = DataParallel(model_one_shot).cuda()
+    best_five_shot_model = DataParallel(model_five_shot).cuda()
 
     print('\nEvaluating on 5 seeds.....')
     total_miou = 0.0
-    model.eval()
+    model_one_shot.eval()
+    model_five_shot.eval()
+
     for seed in range(5):
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 
-        miou = evaluate(best_model, testloader, args)
+        miou = evaluate(best_one_shot_model, best_five_shot_model, testloader, args)
         total_miou += miou
 
     print('\n' + '*' * 32)

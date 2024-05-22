@@ -59,22 +59,45 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
     metric = mIOU(num_classes)
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
-        print(img_s_list.shape, img_q.shape, 'check size')
+        # print(img_s_list.shape, img_q.shape, 'check size')
 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)
             
         img_s_list = img_s_list.numpy().tolist()
         mask_s_list = mask_s_list.numpy().tolist()
-
+        # print(len(img_s_list), len(mask_s_list), 'check 2')
         img_q, mask_q = img_q.cuda(), mask_q.cuda()
+        mask_q_c=mask_q.clone().detach()
+        mask_q_c=mask_q_c.cuda()
+
+        cls = cls[0].item()
+        cls = cls + 1
+        print(cls, 'cls 2')
 
         for k in range(len(img_s_list)):
             img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
             img_s_list[k], mask_s_list[k] = img_s_list[k].cuda(), mask_s_list[k].cuda()
+            # print(img_s_list[k].shape, mask_s_list[k].shape, 'check 3')
+            # cls = cls[0].item()
+            # cls = cls + 1
+            # print(cls, 'cls')
 
-        cls = cls[0].item()
-        cls = cls + 1
+            with torch.no_grad():
+                img_s_one_shot = img_s_list[k].unsqueeze(0)
+                mask_s_one_shot = mask_s_list[k].unsqueeze(0)
+                # print(img_s_one_shot.shape, mask_s_one_shot.shape, 'one shot ccheck')
+                
+                pred_one = model_one_shot(img_s_one_shot, mask_s_one_shot, img_q, None)[0]
+                pred_one = torch.argmax(pred_one, dim=1)
+                # print(pred, 'val one shot')
+                pred_one[pred_one == 1] = cls
+                mask_q_c[mask_q_c == 1] = cls
+                
+                metric.add_batch(pred_one.cpu().numpy(), mask_q_c.cpu().numpy())
+                tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
+                # print()
+
 
         with torch.no_grad():
             pred = model_five_shot(img_s_list, mask_s_list, img_q, None)[0]

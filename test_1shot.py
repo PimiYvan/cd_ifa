@@ -198,7 +198,7 @@ def main():
         os.remove(filename)
 
     with open(filename, "a") as csv_file:
-        writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
+        writer=csv.writer(csv_file, delimiter=',', lineterminator='\n')
         writer.writerow(fields)
 
     for seed in range(5):

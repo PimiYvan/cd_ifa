@@ -96,7 +96,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
                 
                 metric.add_batch(pred_one.cpu().numpy(), mask_q_c.cpu().numpy())
                 tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
-                # print()
+                print("Testing mIOU one shot: %.2f" % (metric.evaluate() * 100.0))
 
 
         with torch.no_grad():

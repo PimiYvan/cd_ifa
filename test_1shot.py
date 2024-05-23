@@ -8,6 +8,8 @@ from torch.nn import DataParallel
 from tqdm import tqdm
 import glob
 from data.dataset import FSSDataset
+import csv 
+import numpy as np
 
 def parse_args():
     parser = argparse.ArgumentParser(description='IFA for CD-FSS')
@@ -57,6 +59,12 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         num_classes = 1
 
     metric = mIOU(num_classes)
+    # field names
+    fields = ['DB', 'Diff', 'Mean']
+    fields += ['D' + str(i) for i in range(args.shot)]
+    
+    # name of csv file
+    filename = "result_one_five_shot.csv"
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
         # print(img_s_list.shape, img_q.shape, 'check size')
@@ -73,7 +81,9 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
 
         cls = cls[0].item()
         cls = cls + 1
-        print(cls, 'cls 2')
+        # print(cls, 'cls 2')
+        one_shot_results = []
+        data_result = {}
 
         for k in range(len(img_s_list)):
             img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
@@ -95,9 +105,10 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
                 mask_q_c[mask_q_c == 1] = cls
                 
                 metric.add_batch(pred_one.cpu().numpy(), mask_q_c.cpu().numpy())
-                tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
-                print("Testing mIOU one shot: %.2f" % (metric.evaluate() * 100.0))
-
+                tbar.set_description("Testing mIOU 1 shot: %.2f" % (metric.evaluate() * 100.0))
+                # print("Testing mIOU one shot: %.2f" % (metric.evaluate() * 100.0))
+                data_result.update({'D'+ str(k): metric.evaluate() * 100.0})
+                one_shot_results.append(metric.evaluate() * 100.0)
 
         with torch.no_grad():
             pred = model_five_shot(img_s_list, mask_s_list, img_q, None)[0]
@@ -107,8 +118,18 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         mask_q[mask_q == 1] = cls
 
         metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
+        tbar.set_description("Testing mIOU full shot: %.2f" % (metric.evaluate() * 100.0))
+        result_batch_five_shot = metric.evaluate() * 100.0
 
-        tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
+        data_result.update({'DB': result_batch_five_shot })
+        mean = np.array(one_shot_results).mean()
+        data_result.update({'Mean': mean })
+        data_result.update({'Diff': mean - result_batch_five_shot })
+
+        print(data_result)
+        with open(filename, 'a', newline='') as csvfile:
+            csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+            csvwriter.writerows([data_result])
 
     return metric.evaluate() * 100.0
 

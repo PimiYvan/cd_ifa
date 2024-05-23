@@ -60,9 +60,9 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
 
     metric = mIOU(num_classes)
     # field names
-    fields = ['DB', 'Diff', 'Mean']
-    fields += ['D' + str(i) for i in range(args.shot)]
     
+    fields = ['D' + str(i) for i in range(args.shot)]
+    fields += ['DB', 'Diff', 'Mean']
     # name of csv file
     filename = "result_one_five_shot.csv"
 
@@ -127,10 +127,9 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         data_result.update({'Diff': mean - result_batch_five_shot })
 
         print(data_result)
-        with open(filename, 'a', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-            csvwriter.writerows([data_result])
-
+        with open(filename, "a") as csv_file:
+            writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
+            writer.writerow(data_result)
     return metric.evaluate() * 100.0
 
 def main():

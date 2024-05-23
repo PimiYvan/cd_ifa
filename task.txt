@@ -5,6 +5,7 @@ cedar
 31816686 
 31960791
 32390017
+32391672
 
 sbatch train_script.sh
 python -W ignore train.py --dataset fss --data-root ./dataset --backbone resnet50 --batch-size 4 --shot 1 --refine

@@ -45,7 +45,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
+filename = "result_one_five_shot.csv"
 def evaluate(model_one_shot, model_five_shot, dataloader, args):
     tbar = tqdm(dataloader)
 
@@ -64,7 +64,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
     fields = ['D' + str(i) for i in range(args.shot)]
     fields += ['DB', 'Diff', 'Mean']
     # name of csv file
-    filename = "result_one_five_shot.csv"
+    
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
         # print(img_s_list.shape, img_q.shape, 'check size')
@@ -126,11 +126,11 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         data_result.update({'Mean': mean })
         data_result.update({'Diff': mean - result_batch_five_shot })
 
-        print(data_result)
+        # print(data_result)
         with open(filename, "a") as csv_file:
             writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
-            writer.writeheader()
             writer.writerow(data_result)
+            
     return metric.evaluate() * 100.0
 
 def main():
@@ -189,6 +189,12 @@ def main():
     total_miou = 0.0
     model_one_shot.eval()
     model_five_shot.eval()
+
+    fields = ['D' + str(i) for i in range(args.shot)]
+    fields += ['DB', 'Diff', 'Mean']
+    with open(filename, "a") as csv_file:
+        writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
+        writer.writeheader()
 
     for seed in range(5):
         print('\nRun %i:' % (seed + 1))

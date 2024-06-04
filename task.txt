@@ -8,8 +8,10 @@ cedar
 32391672
 32411656
 32416049
+32418810
+32430533
 
-seff 32416049
+seff 32416049 32418810
 
 sbatch train_script.sh
 python -W ignore train.py --dataset fss --data-root ./dataset --backbone resnet50 --batch-size 4 --shot 1 --refine

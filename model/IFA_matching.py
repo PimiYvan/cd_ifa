@@ -4,13 +4,18 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import pdb
+from .resnet_vdb import resnet18_vdb, resnet50_vdb
 
 import numpy as np
 
 class IFA_MatchingNet(nn.Module):
     def __init__(self, backbone, refine=False, shot=1):
         super(IFA_MatchingNet, self).__init__()
-        backbone = resnet.__dict__[backbone](pretrained=True)
+        if 'vdb' in backbone:
+            backbone = resnet50_vdb(pretrained=True)
+        else:
+            backbone = resnet.__dict__[backbone](pretrained=True)
+            
         self.layer0 = nn.Sequential(backbone.conv1, backbone.bn1, backbone.relu, backbone.maxpool)
         self.layer1, self.layer2, self.layer3 = backbone.layer1, backbone.layer2, backbone.layer3
         self.refine = refine

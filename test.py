@@ -23,7 +23,7 @@ def parse_args():
                         help='training dataset')
     parser.add_argument('--backbone',
                         type=str,
-                        choices=['resnet50', 'resnet101'],
+                        choices=['resnet50', 'resnet101', 'resnet50_vdb'],
                         default='resnet50',
                         help='backbone of semantic segmentation model')
     parser.add_argument('--refine', dest='refine', action='store_true', default=False)
@@ -117,7 +117,7 @@ def main():
             if args.shot == 5:
                 checkpoint_path = './trained_models/lung/resnet50_5shot_avg_74.59.pth'
     if args.dataset == 'fss':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb':
             if args.shot == 1:
                 # checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
                 checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.20.pth'

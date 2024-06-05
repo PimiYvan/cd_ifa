@@ -29,59 +29,59 @@ model_urls = {
 
 
 # class BatchTransNorm(nn.BatchNorm2d):
-class BT2d(nn.BatchNorm2d):
-    def __init__(self,
-                 num_features: int,
-                 eps: float = 1e-5,
-                 momentum: float = 0.1,
-                 affine: bool = True,
-                 track_running_stats: bool = True):
-        super(BT2d, self).__init__(
-            num_features, eps, momentum, affine, track_running_stats)
+# class BT2d(nn.BatchNorm2d):
+#     def __init__(self,
+#                  num_features: int,
+#                  eps: float = 1e-5,
+#                  momentum: float = 0.1,
+#                  affine: bool = True,
+#                  track_running_stats: bool = True):
+#         super(BT2d, self).__init__(
+#             num_features, eps, momentum, affine, track_running_stats)
 
-    # VDT Forward
-    def forward(self, target_input):
-        exponential_average_factor = self.momentum
+#     # VDT Forward
+#     def forward(self, target_input):
+#         exponential_average_factor = self.momentum
         
-        target_mean = target_input.mean([0, 2, 3])
-        target_var = target_input.var([0, 2, 3], unbiased=False)
+#         target_mean = target_input.mean([0, 2, 3])
+#         target_var = target_input.var([0, 2, 3], unbiased=False)
         
-        n = target_input.numel() / target_input.size(1)
-        with torch.no_grad():
-            running_target_mean = exponential_average_factor * target_mean\
-                + (1 - exponential_average_factor) * self.running_mean  
-            # update running_var with unbiased var
-            running_target_var = exponential_average_factor * target_var * n / (n - 1)\
-                + (1 - exponential_average_factor) * self.running_var
+#         n = target_input.numel() / target_input.size(1)
+#         with torch.no_grad():
+#             running_target_mean = exponential_average_factor * target_mean\
+#                 + (1 - exponential_average_factor) * self.running_mean  
+#             # update running_var with unbiased var
+#             running_target_var = exponential_average_factor * target_var * n / (n - 1)\
+#                 + (1 - exponential_average_factor) * self.running_var
 
-            running_target_var = running_target_var[None, :, None, None]
-            running_target_mean = running_target_mean[None, :, None, None]
+#             running_target_var = running_target_var[None, :, None, None]
+#             running_target_mean = running_target_mean[None, :, None, None]
             
-            source_var = self.running_var[None, :, None, None]
-            source_mean = self.running_mean[None, :, None, None]
+#             source_var = self.running_var[None, :, None, None]
+#             source_mean = self.running_mean[None, :, None, None]
             
-            weight = self.weight[None, :, None, None]
-            bias = self.bias[None, :, None, None]
+#             weight = self.weight[None, :, None, None]
+#             bias = self.bias[None, :, None, None]
             
-            #  transfer
-            target_input = (target_input - running_target_mean) * (torch.sqrt(source_var + self.eps) /
-                                                           torch.sqrt(running_target_var + self.eps)) + source_mean
+#             #  transfer
+#             target_input = (target_input - running_target_mean) * (torch.sqrt(source_var + self.eps) /
+#                                                            torch.sqrt(running_target_var + self.eps)) + source_mean
             
-            transferred_mean = target_input.mean([0, 2, 3])[None, :, None, None]
-            transferred_var = target_input.var([0, 2, 3], unbiased=False)[None, :, None, None]
+#             transferred_mean = target_input.mean([0, 2, 3])[None, :, None, None]
+#             transferred_var = target_input.var([0, 2, 3], unbiased=False)[None, :, None, None]
             
-            running_transferred_mean = exponential_average_factor * transferred_mean\
-                + (1 - exponential_average_factor) * self.running_mean[None, :, None, None]
-            # update running_var with unbiased var
-            running_transferred_var = exponential_average_factor * transferred_var * n / (n - 1)\
-                + (1 - exponential_average_factor) * self.running_var[None, :, None, None]
+#             running_transferred_mean = exponential_average_factor * transferred_mean\
+#                 + (1 - exponential_average_factor) * self.running_mean[None, :, None, None]
+#             # update running_var with unbiased var
+#             running_transferred_var = exponential_average_factor * transferred_var * n / (n - 1)\
+#                 + (1 - exponential_average_factor) * self.running_var[None, :, None, None]
             
-            target_input = (weight * (target_input - running_transferred_mean) /
-                            (torch.sqrt(running_transferred_var + self.eps))) + bias
+#             target_input = (weight * (target_input - running_transferred_mean) /
+#                             (torch.sqrt(running_transferred_var + self.eps))) + bias
                         
-            return target_input
+#             return target_input
 
-
+BT2d = nn.BatchNorm2d
 
 def conv3x3(in_planes: int, out_planes: int, stride: int = 1, groups: int = 1, dilation: int = 1) -> nn.Conv2d:
     """3x3 convolution with padding"""

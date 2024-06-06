@@ -1,4 +1,5 @@
 import model.resnet as resnet
+import model.resnet_vdb3 as resnet3
 
 import torch
 from torch import nn
@@ -12,7 +13,7 @@ class IFA_MatchingNet(nn.Module):
     def __init__(self, backbone, refine=False, shot=1):
         super(IFA_MatchingNet, self).__init__()
         if 'vdb' in backbone:
-            backbone = resnet50_vdb(pretrained=True)
+            backbone = resnet3.__dict__[backbone](pretrained=True)
         else:
             backbone = resnet.__dict__[backbone](pretrained=True)
             

@@ -13,7 +13,7 @@ class IFA_MatchingNet(nn.Module):
     def __init__(self, backbone, refine=False, shot=1):
         super(IFA_MatchingNet, self).__init__()
         if 'vdb' in backbone:
-            backbone = resnet3.__dict__[backbone](pretrained=True)
+            backbone = resnet3.__dict__['resnet50'](pretrained=True)
         else:
             backbone = resnet.__dict__[backbone](pretrained=True)
             

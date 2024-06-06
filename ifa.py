@@ -39,7 +39,7 @@ def parse_args():
                         help='cropping size of training samples')
     parser.add_argument('--backbone',
                         type=str,
-                        choices=['resnet50', 'resnet101'],
+                        choices=['resnet50', 'resnet101', 'resnet50_vdb'],
                         default='resnet50',
                         help='backbone of semantic segmentation model')
     parser.add_argument('--refine', dest='refine', action='store_true', default=False)

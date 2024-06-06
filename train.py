@@ -152,7 +152,6 @@ def main():
         model.train()
 
         for module in model.modules():
-            print(isinstance(module, torch.nn.BatchNorm2d), 'vdb')
             if isinstance(module, torch.nn.BatchNorm2d):
                 module.eval()
 

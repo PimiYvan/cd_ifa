@@ -99,19 +99,19 @@ def main():
 
     ### Please modify the following paths with your model path if needed.
     if args.dataset == 'deepglobe':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb':
             if args.shot == 1:
                 checkpoint_path = './trained_models/deepglobe/resnet50_1shot_avg_50.63.pth'
             if args.shot == 5:
                 checkpoint_path = './trained_models/deepglobe/resnet50_5shot_avg_58.76.pth'
-    if args.dataset == 'isic':
-        if args.backbone == 'resnet50':
+    if args.dataset == 'isic' :
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb':
             if args.shot == 1:
                 checkpoint_path = './trained_models/isic/resnet50_1shot_avg_66.34.pth'
             if args.shot == 5:
                 checkpoint_path = './trained_models/isic/resnet50_5shot_avg_69.77.pth'
     if args.dataset == 'lung':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb':
             if args.shot == 1:
                 checkpoint_path = './trained_models/lung/resnet50_1shot_avg_73.96.pth'
             if args.shot == 5:

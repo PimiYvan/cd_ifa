@@ -64,6 +64,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
     fields = ['D' + str(i) for i in range(args.shot)]
     fields += ['DB', 'Diff', 'Mean']
     # name of csv file
+    t = 0
     
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
@@ -130,6 +131,9 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         with open(filename, "a") as csv_file:
             writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
             writer.writerow(data_result)
+        t += 1 
+        if t > 3 : 
+            break 
 
     return metric.evaluate() * 100.0
 

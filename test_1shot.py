@@ -68,7 +68,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
     
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
-        print(img_s_list.shape, img_q.shape, 'check size')
+        # print(img_s_list.shape, img_q.shape, 'check size')
 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)

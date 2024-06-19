@@ -133,9 +133,9 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         with open(filename, "a") as csv_file:
             writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
             writer.writerow(data_result)
-        t += 1 
-        if t > 3 : 
-            break 
+        # t += 1 
+        # if t > 4 : 
+        #     break 
 
     return metric.evaluate() * 100.0
 

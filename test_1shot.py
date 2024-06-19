@@ -62,7 +62,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
     # field names
     
     fields = ['D' + str(i) for i in range(args.shot)]
-    fields += ['DB', 'Diff', 'Mean']
+    fields += ['DB', 'Diff', 'Mean', 'Batch path', 'Target path']
     # name of csv file
     t = 0
     
@@ -126,6 +126,8 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         mean = np.array(one_shot_results).mean()
         data_result.update({'Mean': mean })
         data_result.update({'Diff': mean - result_batch_five_shot })
+        data_result.update({'Batch path': _ })
+        data_result.update({'Target path': id_q })
 
         # print(data_result)
         with open(filename, "a") as csv_file:
@@ -195,7 +197,7 @@ def main():
     model_five_shot.eval()
 
     fields = ['D' + str(i) for i in range(args.shot)]
-    fields += ['DB', 'Diff', 'Mean']
+    fields += ['DB', 'Diff', 'Mean', 'Batch path', 'Target path']
 
     file_exists = os.path.isfile(filename)
     if file_exists:

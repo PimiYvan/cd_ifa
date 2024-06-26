@@ -114,25 +114,25 @@ def main():
 
     ### Please modify the following paths with your trained model paths.
     if args.dataset == 'deepglobe':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb' :
             if args.shot == 1:
                 checkpoint_path = './outdir/models/deepglobe/resnet50_1shot_avg_44.40.pth'
             if args.shot == 5:
                 checkpoint_path = './outdir/models/deepglobe/resnet50_5shot_avg_52.78.pth'
     if args.dataset == 'isic':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb':
             if args.shot == 1:
                 checkpoint_path = './outdir/models/isic/resnet50_1shot_avg_55.50.pth'
             if args.shot == 5:
                 checkpoint_path = './outdir/models/isic/resnet50_5shot_avg_62.60.pth'
     if args.dataset == 'lung':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb':
             if args.shot == 1:
                 checkpoint_path = './outdir/models/lung/resnet50_1shot_avg_72.64.pth'
             if args.shot == 5:
                 checkpoint_path = './outdir/models/lung/resnet50_5shot_avg_73.07.pth'
     if args.dataset == 'fss':
-        if args.backbone == 'resnet50':
+        if args.backbone == 'resnet50' or args.backbone == 'resnet50_vdb' :
             if args.shot == 1:
                 # checkpoint_path = './outdir/models/fss/resnet50_1shot_avg_77.16.pth'
                 checkpoint_path = './outdir/models/fss/resnet50_1shot_avg_77.07.pth'

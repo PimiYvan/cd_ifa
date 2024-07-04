@@ -19,3 +19,30 @@ pip install opencv-python-headless
 
 pip install opencv_python
 python setup.py install
+
+!pip install -q opencv-python==4.5.5.64
+!pip install -q --force-reinstall albumentations==1.0.3
+
+pip install opencv-python
+
+pip install --no-deps albumentations
+
+pip install --no-deps albumentations==1.3.0
+pip install opencv-python==4.8.0.76
+pip install scikit-image==0.23
+pip install opencv-python-headless==4.9.0.80
+pip install qudida
+pip install pyyaml
+
+pip install opencv-python==4.9.0.80
+pip install albumentations --no-binary albumentations
+
+module load StdEnv/2020
+module load StdEnv/2020
+module spider StdEnv/2020
+module spider python/3.9.6
+module load python/3.9.6
+
+
+support@tech.alliancecan.ca
+

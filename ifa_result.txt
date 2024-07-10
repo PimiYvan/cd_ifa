@@ -17,3 +17,5 @@ lung                75.81                          77.04
 DEEPGLOBE           48.94                          57.77
 ISIC                -----                          -----
 
+https://github.com/Jhyun17/DeYO/blob/main/methods/deyo.py
+

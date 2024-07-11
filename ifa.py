@@ -168,7 +168,8 @@ def main():
             for param in module.parameters():
                 param.requires_grad = False
 
-    criterion = CrossEntropyLoss(ignore_index=255)
+    # criterion = CrossEntropyLoss(ignore_index=255)
+    criterion = CrossEntropyLoss()
     optimizer = SGD([param for param in model.parameters() if param.requires_grad],
                     lr=args.lr, momentum=0.9, weight_decay=5e-4)
 

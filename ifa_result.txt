@@ -12,10 +12,18 @@ ISIC                -----                          -----
 
 result IFA + VDB (resnet50 + vdb )
 Dataset             1 shot/                        5shot 
-FSS                 81.32                          
+FSS                 81.32                          83.
 lung                75.81                          77.04
 DEEPGLOBE           48.94                          57.77
 ISIC                -----                          -----
 
 https://github.com/Jhyun17/DeYO/blob/main/methods/deyo.py
+
+adding another column 5shot + disruptor
+
+class 1     2      3           4
+
+change one shot to a bad class 
+
+test with ISIC 
 

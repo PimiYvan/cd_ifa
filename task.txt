@@ -27,3 +27,10 @@ python -W ignore ifa.py \
   --dataset deepglobe --data-root ./dataset \
   --backbone resnet50 --batch-size 12 --shot 1 --refine --lr 0.0005
 
+
+change momemtum 
+.1,  .5 
+.01,  .05 
+.001,  .005
+.0001   .0005
+.00001   .000005

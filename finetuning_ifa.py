@@ -192,11 +192,13 @@ def main():
 
         model.train()
 
-        for module in model.modules():
-            if not isinstance(module, torch.nn.BatchNorm2d):
-                module.eval()
-            # else:
-            #     module.eval()
+        # for module in model.modules():
+        #     # if not isinstance(module, torch.nn.BatchNorm2d):
+        #     #     module.eval()
+        #     # else:
+        #     #     module.eval()
+        #     if isinstance(module, torch.nn.BatchNorm2d):
+        #         module.train()
 
         # for module in model.modules():
         #     if isinstance(module, torch.nn.BatchNorm2d):

@@ -21,7 +21,7 @@ class BT2d(nn.BatchNorm2d):
                  num_features: int,
                  eps: float = 1e-5,
                 #  momentum: float = 0.1,
-                 momentum: float = 0.05,
+                 momentum: float = 0.001,
                  affine: bool = True,
                  track_running_stats: bool = True):
         super(BT2d, self).__init__(

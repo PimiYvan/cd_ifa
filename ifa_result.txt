@@ -57,4 +57,4 @@ momemtum/dataset        deepglobe 1 shot    deepglobe 5 shot      fss 1 shot    
 bonus
 momentum        lung 5shot 
 0.6             78.85
-0.4 
+0.4             80.00

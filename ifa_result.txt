@@ -58,3 +58,4 @@ bonus
 momentum        lung 5shot 
 0.6             78.85
 0.4             80.00
+0.3             79.83

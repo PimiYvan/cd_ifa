@@ -47,7 +47,7 @@ class DatasetISIC(Dataset):
     def load_frame(self, query_name, support_names):
         query_img = Image.open(query_name).convert('RGB')
         support_imgs = [Image.open(name).convert('RGB') for name in support_names]
-
+        print(query_name, 'my query name')
         query_id = query_name.split('/')[-1].split('.')[0]
         ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth')
         query_name = os.path.join(ann_path, query_id) + '_segmentation.png'

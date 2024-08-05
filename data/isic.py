@@ -47,9 +47,12 @@ class DatasetISIC(Dataset):
     def load_frame(self, query_name, support_names):
         query_img = Image.open(query_name).convert('RGB')
         support_imgs = [Image.open(name).convert('RGB') for name in support_names]
-        print(query_name, 'my query name')
+        # print(query_name, 'my query name')
         query_id = query_name.split('/')[-1].split('.')[0]
-        ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth')
+        category = query_name.split('/')[-2]
+
+        # ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth')
+        ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth', str(category))
         query_name = os.path.join(ann_path, query_id) + '_segmentation.png'
         support_ids = [name.split('/')[-1].split('.')[0] for name in support_names]
         support_names = [os.path.join(ann_path, sid) + '_segmentation.png' for name, sid in zip(support_names, support_ids)]

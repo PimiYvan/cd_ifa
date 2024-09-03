@@ -45,8 +45,8 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-filename = "result_one_five_shot.csv"
-def evaluate(model_one_shot, model_five_shot, dataloader, args):
+base_filename = "result_one_five_shot"
+def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
     tbar = tqdm(dataloader)
 
     if args.dataset == 'fss':
@@ -130,6 +130,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, args):
         data_result.update({'Target path': id_q })
 
         # print(data_result)
+        
         with open(filename, "a") as csv_file:
             writer = csv.DictWriter(csv_file, delimiter=',', fieldnames=fields)
             writer.writerow(data_result)
@@ -192,6 +193,7 @@ def main():
     fields = ['D' + str(i) for i in range(args.shot)]
     fields += ['DB', 'Diff', 'Mean', 'Batch path', 'Target path']
 
+    filename = base_filename + "_" + args.dataset + ".csv"
     file_exists = os.path.isfile(filename)
     if file_exists:
         os.remove(filename)
@@ -204,7 +206,7 @@ def main():
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 
-        miou = evaluate(best_one_shot_model, best_five_shot_model, testloader, args)
+        miou = evaluate(best_one_shot_model, best_five_shot_model, testloader, args, filename)
         total_miou += miou
 
     print('\n' + '*' * 32)

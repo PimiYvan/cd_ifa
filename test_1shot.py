@@ -58,7 +58,8 @@ def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
     elif args.dataset == 'lung':
         num_classes = 1
 
-    metric = mIOU(num_classes)
+    metric_one_shot = mIOU(num_classes)
+    metric_five_shot = mIOU(num_classes)
     # field names
     
     fields = ['D' + str(i) for i in range(args.shot)]
@@ -77,6 +78,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
         mask_s_list = mask_s_list.numpy().tolist()
         # print(len(img_s_list), len(mask_s_list), 'check 2')
         img_q, mask_q = img_q.cuda(), mask_q.cuda()
+
         mask_q_c=mask_q.clone().detach()
         mask_q_c=mask_q_c.cuda()
 
@@ -105,11 +107,11 @@ def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
                 pred_one[pred_one == 1] = cls
                 mask_q_c[mask_q_c == 1] = cls
                 
-                metric.add_batch(pred_one.cpu().numpy(), mask_q_c.cpu().numpy())
-                tbar.set_description("Testing mIOU 1 shot: %.2f" % (metric.evaluate() * 100.0))
-                # print("Testing mIOU one shot: %.2f" % (metric.evaluate() * 100.0))
-                data_result.update({'D'+ str(k): metric.evaluate() * 100.0})
-                one_shot_results.append(metric.evaluate() * 100.0)
+                metric_one_shot.add_batch(pred_one.cpu().numpy(), mask_q_c.cpu().numpy())
+                tbar.set_description("Testing mIOU 1 shot: %.2f" % (metric_one_shot.evaluate() * 100.0))
+                # print("Testing mIOU one shot: %.2f" % (metric_one_shot.evaluate() * 100.0))
+                data_result.update({'D'+ str(k): metric_one_shot.evaluate() * 100.0})
+                one_shot_results.append(metric_one_shot.evaluate() * 100.0)
 
         with torch.no_grad():
             pred = model_five_shot(img_s_list, mask_s_list, img_q, None)[0]
@@ -118,9 +120,9 @@ def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
         pred[pred == 1] = cls
         mask_q[mask_q == 1] = cls
 
-        metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
-        tbar.set_description("Testing mIOU full shot: %.2f" % (metric.evaluate() * 100.0))
-        result_batch_five_shot = metric.evaluate() * 100.0
+        metric_five_shot.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
+        tbar.set_description("Testing mIOU full shot: %.2f" % (metric_five_shot.evaluate() * 100.0))
+        result_batch_five_shot = metric_five_shot.evaluate() * 100.0
 
         data_result.update({'DB': result_batch_five_shot })
         mean = np.array(one_shot_results).mean()
@@ -138,7 +140,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
         # if t > 4 : 
         #     break 
 
-    return metric.evaluate() * 100.0
+    return (metric_one_shot.evaluate() * 100.0, metric_five_shot.evaluate() * 100.0,)
 
 def main():
     args = parse_args()
@@ -186,7 +188,8 @@ def main():
     best_five_shot_model = DataParallel(model_five_shot).cuda()
 
     print('\nEvaluating on 5 seeds.....')
-    total_miou = 0.0
+    total_miou_one_shot = 0.0
+    total_miou_five_shot = 0.0
     model_one_shot.eval()
     model_five_shot.eval()
 
@@ -206,11 +209,13 @@ def main():
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 
-        miou = evaluate(best_one_shot_model, best_five_shot_model, testloader,filename, args)
-        total_miou += miou
+        miou_one_shot, miou_five_shot = evaluate(best_one_shot_model, best_five_shot_model, testloader,filename, args)
+        total_miou_one_shot += miou_one_shot
+        total_miou_five_shot += miou_five_shot
 
     print('\n' + '*' * 32)
-    print('Averaged mIOU on 5 seeds: %.2f' % (total_miou / 5))
+    print('Averaged mIOU 1 shot on 5 seeds: %.2f' % (total_miou_one_shot / 5))
+    print('Averaged mIOU 5 shot on 5 seeds: %.2f' % (total_miou_five_shot / 5))
     print('*' * 32 + '\n')
 
 

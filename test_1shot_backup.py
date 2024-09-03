@@ -152,29 +152,35 @@ def main():
     ### Please modify the following paths with your model path if needed.
     if args.dataset == 'deepglobe':
         if args.backbone == 'resnet50':
-            checkpoint_one_shot_path = './trained_models/deepglobe/resnet50_1shot_avg_50.63.pth'
-            checkpoint_five_shot_path = './trained_models/deepglobe/resnet50_5shot_avg_58.76.pth'
+            if args.shot == 1:
+                checkpoint_path = './trained_models/deepglobe/resnet50_1shot_avg_50.63.pth'
+            if args.shot == 5:
+                checkpoint_path = './trained_models/deepglobe/resnet50_5shot_avg_58.76.pth'
     if args.dataset == 'isic':
         if args.backbone == 'resnet50':
-            checkpoint_one_shot_path = './trained_models/isic/resnet50_1shot_avg_66.34.pth'
-            checkpoint_five_shot_path = './trained_models/isic/resnet50_5shot_avg_69.77.pth'
+            if args.shot == 1:
+                checkpoint_path = './trained_models/isic/resnet50_1shot_avg_66.34.pth'
+            if args.shot == 5:
+                checkpoint_path = './trained_models/isic/resnet50_5shot_avg_69.77.pth'
     if args.dataset == 'lung':
         if args.backbone == 'resnet50':
-            
-            checkpoint_one_shot_path = './trained_models/lung/resnet50_1shot_avg_73.96.pth'
-            checkpoint_five_shot_path = './trained_models/lung/resnet50_5shot_avg_74.59.pth'
+            if args.shot == 1:
+                checkpoint_path = './trained_models/lung/resnet50_1shot_avg_73.96.pth'
+            if args.shot == 5:
+                checkpoint_path = './trained_models/lung/resnet50_5shot_avg_74.59.pth'
     if args.dataset == 'fss':
         if args.backbone == 'resnet50':
-            checkpoint_one_shot_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
-            # checkpoint_one_shot_path = './trained_models/fss/resnet50_1shot_avg_80.20.pth'
-            checkpoint_five_shot_path = './trained_models/fss/resnet50_5shot_avg_82.36.pth'
+            if args.shot == 1:
+                checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
+                # checkpoint_path = './trained_models/fss/resnet50_1shot_avg_80.20.pth'
+            if args.shot == 5:
+                checkpoint_path = './trained_models/fss/resnet50_5shot_avg_82.36.pth'
     
-    # checkpoint_one_shot_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
-    print('the one shot model:', checkpoint_one_shot_path)
-    print('the five shot model:', checkpoint_five_shot_path)
+    checkpoint_one_shot_path = './trained_models/fss/resnet50_1shot_avg_80.08.pth'
+    print('Evaluating model:', checkpoint_path)
 
-    checkpoint_five_shot = torch.load(checkpoint_five_shot_path)
-    model_five_shot.load_state_dict(checkpoint_five_shot)
+    checkpoint = torch.load(checkpoint_path)
+    model_five_shot.load_state_dict(checkpoint)
 
     checkpoint_one_shot = torch.load(checkpoint_one_shot_path)
     model_one_shot.load_state_dict(checkpoint_one_shot)

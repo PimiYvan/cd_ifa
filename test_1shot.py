@@ -206,7 +206,7 @@ def main():
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 
-        miou = evaluate(best_one_shot_model, best_five_shot_model, testloader, args, filename)
+        miou = evaluate(best_one_shot_model, best_five_shot_model, testloader,filename, args)
         total_miou += miou
 
     print('\n' + '*' * 32)

@@ -99,7 +99,8 @@ class DatasetDeepglobe(Dataset):
         # Sample distractor images from different categories
         distractor_names = []
         while len(distractor_names) <= num_distractor:
-            distractor_class_id = np.random.choice([cid for cid in range(len(self.class_ids)) if cid != class_id])
+            # distractor_class_id = np.random.choice([cid for cid in range(len(self.class_ids)) if cid != class_id])
+            distractor_class_id = np.random.choice([cid for cid in range(len(self.class_ids)) if cid != class_id], 1, replace=False)
             distractor_class_sample = self.categories[distractor_class_id]
             distractor_name = np.random.choice(self.img_metadata_classwise[distractor_class_sample], 1, replace=False)[0]
             distractor_names.append(distractor_name)

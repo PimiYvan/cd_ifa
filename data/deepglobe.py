@@ -90,11 +90,11 @@ class DatasetDeepglobe(Dataset):
 
         query_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
         support_names = []
-        
-        while True:  
-            support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
-            if query_name != support_name: support_names.append(support_name)
-            if len(support_names) == (self.shot - num_distractor): break
+        if num_distractor >= self.shot : 
+            while True:  
+                support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+                if query_name != support_name: support_names.append(support_name)
+                if len(support_names) == (self.shot - num_distractor): break
 
         # Sample distractor images from different categories
         distractor_names = []

@@ -61,3 +61,10 @@ momentum        lung 5shot      isic 1 shot
 0.4             80.00
 0.3             79.83           44.91
 0.002                           56.02
+
+
+'./dataset/Deepglobe/04_train_cat/1/test/origin/164029_sat_24.jpg', 
+'./dataset/Deepglobe/04_train_cat/2/test/origin/296368_sat_13.jpg', 
+'./dataset/Deepglobe/04_train_cat/3/test/origin/806805_sat_04.jpg', 
+'./dataset/Deepglobe/04_train_cat/4/test/origin/427037_sat_53.jpg', 
+'./dataset/Deepglobe/04_train_cat/5/test/origin/692004_sat_34.jpg',

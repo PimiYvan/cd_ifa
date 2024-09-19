@@ -29,7 +29,8 @@ class DatasetDeepglobe(Dataset):
         return self.num
 
     def __getitem__(self, idx):
-        query_name, support_names, class_sample = self.sample_episode(idx)
+        # query_name, support_names, class_sample = self.sample_episode(idx)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
         query_img = self.transform(query_img)
@@ -83,6 +84,29 @@ class DatasetDeepglobe(Dataset):
 
         return query_name, support_names, class_id
 
+    def sample_episode_with_distractor(self, idx, num_distractor=1):
+        class_id = idx % len(self.class_ids)
+        class_sample = self.categories[class_id]
+
+        query_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+        support_names = []
+        
+        while True:  
+            support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+            if query_name != support_name: support_names.append(support_name)
+            if len(support_names) == (self.shot - num_distractor): break
+
+        # Sample distractor images from different categories
+        distractor_names = []
+        while len(distractor_names) <= num_distractor:
+            distractor_class_id = np.random.choice([cid for cid in range(len(self.class_ids)) if cid != class_id])
+            distractor_class_sample = self.categories[distractor_class_id]
+            distractor_name = np.random.choice(self.img_metadata_classwise[distractor_class_sample], 1, replace=False)[0]
+            distractor_names.append(distractor_name)
+
+        support_names.extend(distractor_names)
+
+        return query_name, support_names, class_id
 
     def build_img_metadata_classwise(self):
         img_metadata_classwise = {}
@@ -95,3 +119,4 @@ class DatasetDeepglobe(Dataset):
                 if os.path.basename(img_path).split('.')[1] == 'jpg':
                     img_metadata_classwise[cat] += [img_path]
         return img_metadata_classwise
+

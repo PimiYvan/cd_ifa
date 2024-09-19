@@ -112,7 +112,7 @@ def evaluate(model_one_shot, model_five_shot, dataloader, filename, args):
                 # print("Testing mIOU one shot: %.2f" % (metric_one_shot.evaluate() * 100.0))
                 data_result.update({'D'+ str(k): metric_one_shot.evaluate() * 100.0})
                 one_shot_results.append(metric_one_shot.evaluate() * 100.0)
-
+        
         with torch.no_grad():
             pred = model_five_shot(img_s_list, mask_s_list, img_q, None)[0]
             pred = torch.argmax(pred, dim=1)

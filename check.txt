@@ -1,0 +1,10 @@
+
+
+
+
+[
+    (example1, example2, example3, example4, example,), (mask_t_1, mask_t_1, mask_t_1, mask_t_1, mask_t_1)
+    (img_tes1, img_tes1, img_tes1, img_tes1, img_tes1,), (mask_test_1, mask_tes_1, mask_t_1, mask_t_1, mask_t_1)
+]
+
+

@@ -9,7 +9,7 @@ import PIL.Image as Image
 import numpy as np
 
 
-class DatasetDeepglobe(Dataset):
+class DatasetDeepglobeDist(Dataset):
     def __init__(self, datapath, fold, transform, split, shot, num=600):
         self.split = split
         self.benchmark = 'deepglobe'

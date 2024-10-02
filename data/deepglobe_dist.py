@@ -29,8 +29,8 @@ class DatasetDeepglobe(Dataset):
         return self.num
 
     def __getitem__(self, idx):
-        query_name, support_names, class_sample = self.sample_episode(idx)
-        # query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
+        # query_name, support_names, class_sample = self.sample_episode(idx)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
         query_img = self.transform(query_img)
@@ -58,10 +58,18 @@ class DatasetDeepglobe(Dataset):
         support_ids = [name.split('/')[-1].split('.')[0] for name in support_names]
         s_msk_ids = [name.split('/')[-1][:-11] + '_mask_' + name.split('/')[-1][-6:-4] for name in  support_names]
         # support_names = [os.path.join(ann_path, sid) + '.png' for name, sid in zip(support_names, support_ids)]
-        support_names = [os.path.join(ann_path, sid) + '.png' for name, sid in zip(support_names, s_msk_ids)]
-
+        
+        # one_support = support_names[0]
+        # ann_path_support = os.path.join(self.base_path, one_support.split('/')[-4], 'test', 'groundtruth')
+        # support_names = [os.path.join(ann_path_support, sid) + '.png' for name, sid in zip(support_names, s_msk_ids)]
+        new_support_names = []
+        for name, sid in zip(support_names, s_msk_ids):
+            # one_support = 
+            ann_path_support = os.path.join(self.base_path, name.split('/')[-4], 'test', 'groundtruth')
+            new_support_names.append(os.path.join(ann_path_support, sid) + '.png')
+        # print(new_support_names, 'in the load frames')
         query_mask = self.read_mask(query_name)
-        support_masks = [self.read_mask(name) for name in support_names]
+        support_masks = [self.read_mask(name) for name in new_support_names]
 
         return query_img, query_mask, support_imgs, support_masks
 

@@ -31,7 +31,7 @@ class DatasetISICDist(Dataset):
         # query_name, support_names, class_sample = self.sample_episode(idx)
         query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
-
+        
         query_img = self.transform(query_img)
         query_mask = F.interpolate(query_mask.unsqueeze(0).unsqueeze(0).float(), query_img.size()[-2:], mode='nearest').squeeze()
 
@@ -56,10 +56,15 @@ class DatasetISICDist(Dataset):
         ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth', str(category))
         query_name = os.path.join(ann_path, query_id) + '_segmentation.png'
         support_ids = [name.split('/')[-1].split('.')[0] for name in support_names]
-        support_names = [os.path.join(ann_path, sid) + '_segmentation.png' for name, sid in zip(support_names, support_ids)]
-
+        
+        new_support_names = []
+        for name, sid in zip(support_names, support_ids):
+            cat = name.split('/')[-2]
+            ann_path_support = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth', str(cat))
+            new_support_names.append(os.path.join(ann_path_support, sid) + '_segmentation.png')
+        
         query_mask = self.read_mask(query_name)
-        support_masks = [self.read_mask(name) for name in support_names]
+        support_masks = [self.read_mask(name) for name in new_support_names]
 
         return query_img, query_mask, support_imgs, support_masks
 
@@ -67,7 +72,7 @@ class DatasetISICDist(Dataset):
         mask = torch.tensor(np.array(Image.open(img_name).convert('L')))
         mask[mask < 128] = 0
         mask[mask >= 128] = 1
-        return mask
+        return mask 
 
     def sample_episode(self, idx):
         class_id = idx % len(self.class_ids)

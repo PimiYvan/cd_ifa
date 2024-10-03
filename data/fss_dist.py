@@ -9,7 +9,7 @@ import PIL.Image as Image
 import numpy as np
 
 
-class DatasetFSS(Dataset):
+class DatasetFSSDist(Dataset):
     def __init__(self, datapath, fold, transform, split, shot):
         self.split = split
         self.benchmark = 'fss'
@@ -32,7 +32,8 @@ class DatasetFSS(Dataset):
         return len(self.img_metadata)
 
     def __getitem__(self, idx):
-        query_name, support_names, class_sample = self.sample_episode(idx)
+        # query_name, support_names, class_sample = self.sample_episode(idx)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
         query_img = self.transform(query_img)
@@ -83,6 +84,35 @@ class DatasetFSS(Dataset):
             if query_name != support_name: support_names.append(support_name)
             if len(support_names) == self.shot: break
 
+        return query_name, support_names, class_sample
+
+    def sample_episode_with_distractor(self, idx, num_distractor=1):
+        query_name = self.img_metadata[idx]
+        class_sample_name = query_name.split('/')[-2]
+        class_sample = self.categories.index(query_name.split('/')[-2])
+        if self.split == 'val':
+            class_sample += 520
+        elif self.split == 'test':
+            class_sample += 760
+
+        support_names = []
+        if num_distractor < self.shot : 
+            while True:  # keep sampling support set if query == support
+                support_name = np.random.choice(range(1, 11), 1, replace=False)[0]
+                support_name = os.path.join(os.path.dirname(query_name), str(support_name)) + '.jpg'
+                if query_name != support_name: support_names.append(support_name)
+                if len(support_names) == (self.shot - num_distractor): break
+
+        distractor_names = []
+        while len(distractor_names) < num_distractor:
+            distractor_class_sample = np.random.choice([cid for cid in self.categories if cid != class_sample_name], 1, replace=False)[0]
+            print(distractor_class_sample)
+            img_path = os.path.join(self.base_path, distractor_class_sample)
+            support_name = np.random.choice(range(1, 11), 1, replace=False)[0]
+            support_name = os.path.join(os.path.dirname(img_path), str(support_name)) + '.jpg'
+            distractor_names.append(support_name)
+
+        # support_names.extend(distractor_names)
         return query_name, support_names, class_sample
 
     def build_class_ids(self):

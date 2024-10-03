@@ -9,11 +9,14 @@ from data.isic import DatasetISIC
 from data.lung import DatasetLung
 
 from data.deepglobe_IFA import DatasetDeepglobeIFA
-from data.deepglobe_dist import DatasetDeepglobeDist
 from data.isic_IFA import DatasetISICIFA
 from data.lung_IFA import DatasetLungIFA
 from data.fss_IFA import DatasetFSSIFA
 
+from data.deepglobe_dist import DatasetDeepglobeDist
+from data.fss_dist import DatasetFSSDist
+from data.isic_dist import DatasetISICDist
+from data.lung_dist import DatasetLungDist
 
 class FSSDataset:
 
@@ -31,6 +34,9 @@ class FSSDataset:
             'lungifa': DatasetLungIFA,
             'fssifa': DatasetFSSIFA,
             'deepglobedist': DatasetDeepglobeDist,
+            'fssdist': DatasetFSSDist,
+            'isicdist': DatasetISICDist,
+            'lungdist': DatasetLungDist,
         }
 
         cls.img_mean = [0.485, 0.456, 0.406]

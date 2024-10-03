@@ -1,4 +1,4 @@
-r""" FSS-1000 few-shot semantic segmentation dataset """
+r""" ISIC few-shot semantic segmentation dataset """
 import os
 import glob
 
@@ -9,18 +9,17 @@ import PIL.Image as Image
 import numpy as np
 
 
-class DatasetDeepglobeDist(Dataset):
+class DatasetISICDist(Dataset):
     def __init__(self, datapath, fold, transform, split, shot, num=600):
         self.split = split
-        self.benchmark = 'deepglobe'
+        self.benchmark = 'isic'
         self.shot = shot
         self.num = num
 
-        self.base_path = os.path.join(datapath, 'Deepglobe', '04_train_cat')
+        self.base_path = os.path.join(datapath, 'ISIC')
+        self.categories = ['1','2','3']
 
-        self.categories = ['1','2','3','4','5','6']
-
-        self.class_ids = range(0, 6)
+        self.class_ids = range(0, 3)
         self.img_metadata_classwise = self.build_img_metadata_classwise()
 
         self.transform = transform
@@ -49,27 +48,18 @@ class DatasetDeepglobeDist(Dataset):
     def load_frame(self, query_name, support_names):
         query_img = Image.open(query_name).convert('RGB')
         support_imgs = [Image.open(name).convert('RGB') for name in support_names]
-
+        # print(query_name, 'my query name')
         query_id = query_name.split('/')[-1].split('.')[0]
-        q_msk_id = query_name.split('/')[-1][:-11] + '_mask_' + query_name.split('/')[-1][-6:-4]
-        ann_path = os.path.join(self.base_path, query_name.split('/')[-4], 'test', 'groundtruth')
-        # query_name = os.path.join(ann_path, query_id) + '.png'
-        query_name = os.path.join(ann_path, q_msk_id) + '.png'
+        category = query_name.split('/')[-2]
+
+        # ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth')
+        ann_path = os.path.join(self.base_path, 'ISIC2018_Task1_Training_GroundTruth', str(category))
+        query_name = os.path.join(ann_path, query_id) + '_segmentation.png'
         support_ids = [name.split('/')[-1].split('.')[0] for name in support_names]
-        s_msk_ids = [name.split('/')[-1][:-11] + '_mask_' + name.split('/')[-1][-6:-4] for name in  support_names]
-        # support_names = [os.path.join(ann_path, sid) + '.png' for name, sid in zip(support_names, support_ids)]
-        
-        # one_support = support_names[0]
-        # ann_path_support = os.path.join(self.base_path, one_support.split('/')[-4], 'test', 'groundtruth')
-        # support_names = [os.path.join(ann_path_support, sid) + '.png' for name, sid in zip(support_names, s_msk_ids)]
-        new_support_names = []
-        for name, sid in zip(support_names, s_msk_ids):
-            # one_support = 
-            ann_path_support = os.path.join(self.base_path, name.split('/')[-4], 'test', 'groundtruth')
-            new_support_names.append(os.path.join(ann_path_support, sid) + '.png')
-        # print(new_support_names, 'in the load frames')
+        support_names = [os.path.join(ann_path, sid) + '_segmentation.png' for name, sid in zip(support_names, support_ids)]
+
         query_mask = self.read_mask(query_name)
-        support_masks = [self.read_mask(name) for name in new_support_names]
+        support_masks = [self.read_mask(name) for name in support_names]
 
         return query_img, query_mask, support_imgs, support_masks
 
@@ -95,7 +85,6 @@ class DatasetDeepglobeDist(Dataset):
     def sample_episode_with_distractor(self, idx, num_distractor=1):
         class_id = idx % len(self.class_ids)
         class_sample = self.categories[class_id]
-        # print(class_sample, class_id, 'class sample', self.categories)
 
         query_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
         support_names = []
@@ -115,42 +104,24 @@ class DatasetDeepglobeDist(Dataset):
         support_names.extend(distractor_names)
         return query_name, support_names, class_id
 
+    def build_img_metadata(self):
+        img_metadata = []
+        for cat in self.categories:
+            os.path.join(self.base_path, cat)
+            img_paths = sorted([path for path in glob.glob('%s/*' % os.path.join(self.base_path, 'ISIC2018_Task1-2_Training_Input', cat))])
+            for img_path in img_paths:
+                if os.path.basename(img_path).split('.')[1] == 'jpg':
+                    img_metadata.append(img_path)
+        return img_metadata
+
     def build_img_metadata_classwise(self):
         img_metadata_classwise = {}
         for cat in self.categories:
             img_metadata_classwise[cat] = []
 
         for cat in self.categories:
-            img_paths = sorted([path for path in glob.glob('%s/*' % os.path.join(self.base_path, cat, 'test', 'origin'))])
+            img_paths = sorted([path for path in glob.glob('%s/*' % os.path.join(self.base_path, 'ISIC2018_Task1-2_Training_Input', cat))])
             for img_path in img_paths:
                 if os.path.basename(img_path).split('.')[1] == 'jpg':
                     img_metadata_classwise[cat] += [img_path]
         return img_metadata_classwise
-
-
-# def load_frame(self, query_name, support_names):
-#     query_img = Image.open(query_name).convert('RGB')
-#     support_imgs = [Image.open(name).convert('RGB') for name in support_names]
-
-#     query_id = query_name.split('/')[-1].split('.')[0]
-#     q_msk_id = query_name.split('/')[-1][:-11] + '_mask_' + query_name.split('/')[-1][-6:-4]
-#     ann_path = os.path.join(self.base_path, query_name.split('/')[-4], 'test', 'groundtruth')
-#     # query_name = os.path.join(ann_path, query_id) + '.png'
-#     query_name = os.path.join(ann_path, q_msk_id) + '.png'
-#     support_ids = [name.split('/')[-1].split('.')[0] for name in support_names]
-#     s_msk_ids = [name.split('/')[-1][:-11] + '_mask_' + name.split('/')[-1][-6:-4] for name in  support_names]
-#     # support_names = [os.path.join(ann_path, sid) + '.png' for name, sid in zip(support_names, support_ids)]
-    
-#     # one_support = support_names[0]
-#     # ann_path_support = os.path.join(self.base_path, one_support.split('/')[-4], 'test', 'groundtruth')
-#     # support_names = [os.path.join(ann_path_support, sid) + '.png' for name, sid in zip(support_names, s_msk_ids)]
-#     new_support_names = []
-#     for name, sid in zip(support_names, s_msk_ids):
-#         # one_support = 
-#         ann_path_support = os.path.join(self.base_path, name.split('/')[-4], 'test', 'groundtruth')
-#         new_support_names.append(os.path.join(ann_path_support, sid) + '.png')
-#     # print(new_support_names, 'in the load frames')
-#     query_mask = self.read_mask(query_name)
-#     support_masks = [self.read_mask(name) for name in new_support_names]
-
-#     return query_img, query_mask, support_imgs, support_masks

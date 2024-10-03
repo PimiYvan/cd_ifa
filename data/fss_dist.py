@@ -34,6 +34,7 @@ class DatasetFSSDist(Dataset):
     def __getitem__(self, idx):
         # query_name, support_names, class_sample = self.sample_episode(idx)
         query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
+
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
         query_img = self.transform(query_img)
@@ -106,13 +107,12 @@ class DatasetFSSDist(Dataset):
         distractor_names = []
         while len(distractor_names) < num_distractor:
             distractor_class_sample = np.random.choice([cid for cid in self.categories if cid != class_sample_name], 1, replace=False)[0]
-            print(distractor_class_sample)
             img_path = os.path.join(self.base_path, distractor_class_sample)
             support_name = np.random.choice(range(1, 11), 1, replace=False)[0]
-            support_name = os.path.join(os.path.dirname(img_path), str(support_name)) + '.jpg'
+            support_name = os.path.join(img_path, str(support_name)) + '.jpg'
             distractor_names.append(support_name)
 
-        # support_names.extend(distractor_names)
+        support_names.extend(distractor_names)
         return query_name, support_names, class_sample
 
     def build_class_ids(self):

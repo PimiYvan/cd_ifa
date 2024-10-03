@@ -1,10 +1,8 @@
 graham 
-25388377
-25389778
-25390565
 25390921 # with 1 distractor
 25391067 # without distractor
-
+25394637 # 2 distractor, fss 
+25395006 # isic 1 distractor
 cedar 
 37533480
 37542491

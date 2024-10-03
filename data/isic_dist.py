@@ -29,7 +29,7 @@ class DatasetISICDist(Dataset):
 
     def __getitem__(self, idx):
         # query_name, support_names, class_sample = self.sample_episode(idx)
-        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 2)
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
         
         query_img = self.transform(query_img)

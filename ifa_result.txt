@@ -41,8 +41,8 @@ lung
 5 shot without vdb : 74.59
 
 isic 
-1 shot without vdb : 51.03  / 66.3
-5 shot without vdb : 56.13  / 69.8 
+1 shot without vdb : 51.03  / 66.3 (result from the paper)
+5 shot without vdb : 56.13  / 69.8 (result from the paper)
 
 with resnet + vdb  
 momemtum/dataset        deepglobe 1 shot    deepglobe 5 shot      fss 1 shot        fss 5 shot       lung 1 shot        lung 5 shot     isic 1 shot         isic 5 shot 

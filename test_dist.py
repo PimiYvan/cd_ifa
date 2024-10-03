@@ -89,6 +89,7 @@ def evaluate(model, dataloader, args):
 
 def main():
     args = parse_args()
+    print('test distractor')
     print('\n' + str(args))
 
     FSSDataset.initialize(img_size=400, datapath=args.data_root)

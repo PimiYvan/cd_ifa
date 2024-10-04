@@ -6,13 +6,17 @@ graham
 25414942 # fss with 2 distractor 
 25415912 # fss with 2 distractor 
 25415988 # fss with 2 distractor 
+
+25416013 : fss with 2 distractor 
+25416017 : deepglobe with 3 distractor 
+
 cedar 
 37533480
 37542491
 37590295
 
 seff 32416049 32418810
-
+scancel 32416049
 
 sbatch train_script.sh
 python -W ignore train.py --dataset fss --data-root ./dataset --backbone resnet50 --batch-size 4 --shot 1 --refine

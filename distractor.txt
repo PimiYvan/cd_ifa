@@ -14,12 +14,14 @@ distractor              1 shot/                        5 shot
 0                       50.55                          58.83    (we got the same result as the one without the distractor)
 1                       31.72                          54.59
 2                       ----                           50.32
+3                       ----                           44.16
 
 FSS 
 distractor              1 shot/                        5 shot 
 0                       -----                          83.33   (we got the same result as the one without the distractor)
 1                       -----                          82.92 
-2                       ----                           
+2                       ----                           82.25
+3                       ----                           
 
 ISIC 
 distractor              1 shot/                        5 shot 

@@ -51,3 +51,34 @@ pip install -U git+https://github.com/albu/albumentations
 mkdir pretrained
 gdown 1SgzQSBUp29dDWpq_rdPK114leBo5VXt-
 mv ./resnet50.pth ./pretrained/
+
+
+mkdir ./trained_models
+mkdir ./trained_models/isic/
+gdown 1CJB-MVDPgptuH_a23FGsqhGYQTwLXz6R
+gdown 1swZU2kwSmvrWLTCeHLklu5FBTtVdMoZd
+
+mv resnet50_5shot_avg_69.77.pth ./trained_models/isic/
+mv resnet50_1shot_avg_66.34.pth ./trained_models/isic/
+
+mkdir ./trained_models/fss/
+gdown 1YRiNbiFNqQc1TxYoNILtDT0svCDmro36
+gdown 16c5OHuReaeZ_02qMvUNHlDjZWAQWw7Pv
+
+mv resnet50_1shot_avg_80.08.pth ./trained_models/fss/
+mv resnet50_5shot_avg_82.36.pth ./trained_models/fss/
+
+mkdir ./trained_models/deepglobe/
+gdown 1gafZoYTf2UxgNVlR-1BjHlFzdGR9-LKi
+gdown 1ifeXIKbumMWtaiMwIhgmwOA8SwnxbWSa
+
+mv resnet50_1shot_avg_50.63.pth ./trained_models/deepglobe/
+mv resnet50_5shot_avg_58.76.pth ./trained_models/deepglobe/
+
+mkdir ./trained_models/lung/
+
+gdown 1BaLqnArdILkls-gTXH8r3dJa3Ln1_jli
+gdown 1fckwhxbDEHuQ4Ys-UGupxl25XvDvlGEH
+
+mv resnet50_5shot_avg_74.59.pth ./trained_models/lung/
+mv resnet50_1shot_avg_73.96.pth ./trained_models/lung/

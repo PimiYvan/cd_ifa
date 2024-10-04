@@ -1,4 +1,10 @@
 
+result IFA (resnet 50)
+Dataset             1 shot/                        5shot 
+FSS                 81.38                          83.33
+lung                74.59                          74.59
+DEEPGLOBE           50.55                          58.83
+ISIC                51.03  / 66.3                  56.13 / 69.8 
 
 
 result IFA (resnet 50 + distractor), here the dataloader contains the distractor 
@@ -11,12 +17,12 @@ distractor              1 shot/                        5 shot
 
 FSS 
 distractor              1 shot/                        5 shot 
-0                       -----                             (we got the same result as the one without the distractor)
-1                       -----                          82.92
-2                       ----                           83.33
+0                       -----                          83.33   (we got the same result as the one without the distractor)
+1                       -----                          82.92 
+2                       ----                           
 
 ISIC 
 distractor              1 shot/                        5 shot 
-0                       -----                          (we got the same result as the one without the distractor)
+0                       -----                          56.51     (we got the same result as the one without the distractor)
 1                       -----                          
 2                       ----                           

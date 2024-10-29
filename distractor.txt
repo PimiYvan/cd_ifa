@@ -25,10 +25,15 @@ distractor              1 shot/                        5 shot
 2                       ----                           82.25
 3                       ----                           81.16
 4                       -----                          78.47
-5                       -----                          
+5                       -----                          69.36
 
 ISIC 
 distractor              1 shot/                        5 shot 
 0                       -----                           
 1                       -----                          56.51
 2                       ----                           
+
+
+
+
+https://dinov2.metademolab.com/demos

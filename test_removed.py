@@ -8,6 +8,7 @@ from torch.nn import DataParallel
 from tqdm import tqdm
 import glob
 from data.dataset import FSSDataset
+from util.cosine import cosineSimilarity
 
 def parse_args():
     parser = argparse.ArgumentParser(description='IFA for CD-FSS')
@@ -57,8 +58,10 @@ def evaluate(model, dataloader, args):
         num_classes = 1
 
     metric = mIOU(num_classes)
-
+    cosine = cosineSimilarity()
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
+        similarities = cosine.compute_scores(img_s_list, img_q)
+        print(similarities, 'similarities')
 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)

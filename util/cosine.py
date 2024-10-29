@@ -12,10 +12,11 @@ class cosineSimilarity:
     
     def __init__(self, device=None):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        self.model = self.get_model()
         # self.image_path_1 = image_path_1
         # self.image_path_2 = image_path_2
     
-    def model(self):
+    def get_model(self):
         """Instantiates the feature extracting model 
         
         Parameters
@@ -31,35 +32,17 @@ class cosineSimilarity:
         model = vit_h_14(weights=wt)
         model.heads = nn.Sequential(*list(model.heads.children())[:-1])
         model = model.to(self.device)
-
         return model
-
-    def get_embeddings(self):
-        """Computer embessings given images 
-        
-        Parameters
-        image_paths : str
-
-        Returns
-        -------
-        embeddings: np.ndarray
-
-        """
-        img1 = self.process_test_image(self.image_path_1)
-        img2 = self.process_test_image(self.image_path_2)
-        model = self.model()
-
-        emb_one = model(img1).detach().cpu()
-        emb_two = model(img2).detach().cpu()
-
-        return emb_one, emb_two
 
     def compute_scores(self, img1, img2):
         """Computes cosine similarity between two vectors."""
         # emb_one, emb_two = self.get_embeddings()
-        model = self.model()
+        model = self.model
         emb_one = model(img1).detach().cpu()
         emb_two = model(img2).detach().cpu()
         scores = torch.nn.functional.cosine_similarity(emb_one, emb_two)
-
         return scores.numpy().tolist()
+
+
+
+# https://onyekaokonji.medium.com/cosine-similarity-measuring-similarity-between-multiple-images-f289aaf40c2b

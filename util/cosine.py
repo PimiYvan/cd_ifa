@@ -66,7 +66,6 @@ class cosineSimilarity:
         support_imgs, target_imgs = support_imgs.cuda(), target_imgs.cuda()
         n_shot = support_imgs.shape[1]
         batch_size = support_imgs.shape[0]
-        print(support_imgs.shape, support_imgs.shape)
 
         target_imgs = F.interpolate(target_imgs, size=(518, 518), mode='bilinear', align_corners=False)
         # support_imgs = F.interpolate(support_imgs, size=(518, 518), mode='nearest')
@@ -75,31 +74,21 @@ class cosineSimilarity:
         support_reshaped = F.interpolate(support_reshaped, size=(518, 518), mode='bilinear', align_corners=False)
         support_imgs = support_reshaped.view(batch_size, n_shot, 3, support_reshaped.shape[-2], support_reshaped.shape[-1])
 
-        # img2 = self.preprocess(img2)
-        # emb_one = model(img1).detach().cpu()
-        # emb_two = model(img2).detach().cpu()
-        print(target_imgs.shape, support_imgs.shape, 'they shaped')
         results = []
-
-        print(n_shot, batch_size)
         for i in range(batch_size):
             support_batch = support_imgs[i]
             target = target_imgs[i]
             target = target.unsqueeze(0)
-            print(support_batch.shape, target.shape, 'start compar')
+            emb_two = model(target).detach().cpu()
 
-            emb_one = model(support_batch)
-            emb_two = model(target)
-            scores = torch.nn.functional.cosine_similarity(emb_one, emb_two)
-            # for j in range(n_shot):
-            #     support_img = support_batch[j]
-            #     print(support_img.shape, 'eah')
-            
-                
-            #     emb_two = model(target).detach().cpu()
-            #     scores = torch.nn.functional.cosine_similarity(emb_one, emb_two)
-            #     print(scores)
-        return scores.numpy().tolist()
+            for j in range(n_shot):
+                supp_img = support_batch[j]
+                supp_img = supp_img.unsqueeze(0)
+                emb_one = model(supp_img).detach().cpu()
+                scores = torch.nn.functional.cosine_similarity(emb_one, emb_two)
+                results.append(scores.item())
+
+        return torch.tensor(results, dtype=torch.float64)
 
 
 

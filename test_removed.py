@@ -61,8 +61,10 @@ def evaluate(model, dataloader, args):
     cosine = cosineSimilarity()
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
         similarities = cosine.compute_scores(img_s_list, img_q)
+        print(similarities, 'similarities', _)
+
         # similarities = cosine.compute_scores(_, id_q)
-        print(similarities, 'similarities')
+        # print(similarities, 'similarities')
 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)

@@ -72,6 +72,11 @@ def evaluate(model, dataloader, args):
         else:
             # If indices is 2-dimensional, access the second column as before
             unique_indices = torch.unique(indices[:, 1])
+            
+        length = len(unique_indices)
+        if length == args.shot:
+            print('everything is bad')
+            continue 
         # unique_indices = torch.unique(indices[:, 1])
         # print(unique_indices)
 

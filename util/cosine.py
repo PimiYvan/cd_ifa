@@ -80,13 +80,14 @@ class cosineSimilarity:
             target = target_imgs[i]
             target = target.unsqueeze(0)
             emb_two = model(target).detach().cpu()
-
+            tmp = []
             for j in range(n_shot):
                 supp_img = support_batch[j]
                 supp_img = supp_img.unsqueeze(0)
                 emb_one = model(supp_img).detach().cpu()
                 scores = torch.nn.functional.cosine_similarity(emb_one, emb_two)
-                results.append(scores.item())
+                tmp.append(scores.item())
+            results.append(tmp)
 
         return torch.tensor(results, dtype=torch.float64)
 

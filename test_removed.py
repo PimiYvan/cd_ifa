@@ -61,14 +61,39 @@ def evaluate(model, dataloader, args):
     cosine = cosineSimilarity()
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
         similarities = cosine.compute_scores(img_s_list, img_q)
-        print(similarities, 'similarities', _)
+        # print(similarities, 'similarities', similarities.shape)
+        # print(_)
+        # print(id_q)
+        indices = torch.nonzero(similarities < 0.50).squeeze()
+        # print(indices)  # Output: tensor([0, 3])
+        # print(img_s_list.shape, mask_s_list.shape, 'check')
+        if indices.dim() == 1:
+            unique_indices = torch.unique(indices)
+        else:
+            # If indices is 2-dimensional, access the second column as before
+            unique_indices = torch.unique(indices[:, 1])
+        # unique_indices = torch.unique(indices[:, 1])
+        # print(unique_indices)
 
-        # similarities = cosine.compute_scores(_, id_q)
-        # print(similarities, 'similarities')
+        img_s_list_new = img_s_list.clone()
+        mask_s_list_new = mask_s_list.clone()
 
-        img_s_list = img_s_list.permute(1,0,2,3,4)
-        mask_s_list = mask_s_list.permute(1,0,2,3)
-            
+        mask_img = torch.ones(img_s_list_new.size(1), dtype=bool)
+        mask_img[unique_indices] = False
+        img_s_filtered = img_s_list_new[:, mask_img, :, :, :]
+
+        mask_masks = torch.ones(mask_s_list_new.size(1), dtype=bool)
+        mask_masks[unique_indices] = False
+        mask_s_filtered = mask_s_list_new[:, mask_masks, :, :]
+
+        # print(img_s_filtered.shape, mask_s_filtered.shape, 'wiw')
+
+        # img_s_list = img_s_list.permute(1,0,2,3,4)
+        # mask_s_list = mask_s_list.permute(1,0,2,3)
+
+        img_s_list = img_s_filtered.permute(1,0,2,3,4)
+        mask_s_list = mask_s_filtered.permute(1,0,2,3)
+        
         img_s_list = img_s_list.numpy().tolist()
         mask_s_list = mask_s_list.numpy().tolist()
 
@@ -91,6 +116,7 @@ def evaluate(model, dataloader, args):
         metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
 
         tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
+        # break 
 
     return metric.evaluate() * 100.0
 

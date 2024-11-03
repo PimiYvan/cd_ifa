@@ -121,7 +121,8 @@ def evaluate(model, dataloader, args):
         metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
 
         tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
-        # break 
+        if i > 10 : 
+            break 
 
     return metric.evaluate() * 100.0
 

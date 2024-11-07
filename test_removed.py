@@ -44,6 +44,31 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+def predict(model, metric, img_s_list_clone, mask_s_list_clone, img_q, mask_q, cls ):
+    img_s_list = img_s_list_clone.permute(1,0,2,3,4)
+    mask_s_list = mask_s_list_clone.permute(1,0,2,3)
+    
+    img_s_list = img_s_list.numpy().tolist()
+    mask_s_list = mask_s_list.numpy().tolist()
+
+    img_q, mask_q = img_q.cuda(), mask_q.cuda()
+
+    for k in range(len(img_s_list)):
+        img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
+        img_s_list[k], mask_s_list[k] = img_s_list[k].cuda(), mask_s_list[k].cuda()
+
+    cls = cls[0].item()
+    cls = cls + 1
+
+    with torch.no_grad():
+        pred = model(img_s_list, mask_s_list, img_q, None)[0]
+        pred = torch.argmax(pred, dim=1)
+
+    pred[pred == 1] = cls
+    mask_q[mask_q == 1] = cls
+
+    metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
+    return metric 
 
 def evaluate(model, dataloader, args):
     tbar = tqdm(dataloader)
@@ -58,6 +83,8 @@ def evaluate(model, dataloader, args):
         num_classes = 1
 
     metric = mIOU(num_classes)
+    metric_normal = mIOU(num_classes)
+
     cosine = cosineSimilarity()
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
         similarities = cosine.compute_scores(img_s_list, img_q)
@@ -77,8 +104,7 @@ def evaluate(model, dataloader, args):
         if length == args.shot:
             print('everything is bad')
             continue 
-        # unique_indices = torch.unique(indices[:, 1])
-        # print(unique_indices)
+
 
         img_s_list_new = img_s_list.clone()
         mask_s_list_new = mask_s_list.clone()
@@ -91,37 +117,12 @@ def evaluate(model, dataloader, args):
         mask_masks[unique_indices] = False
         mask_s_filtered = mask_s_list_new[:, mask_masks, :, :]
 
-        # print(img_s_filtered.shape, mask_s_filtered.shape, 'wiw')
-
-        # img_s_list = img_s_list.permute(1,0,2,3,4)
-        # mask_s_list = mask_s_list.permute(1,0,2,3)
-
-        img_s_list = img_s_filtered.permute(1,0,2,3,4)
-        mask_s_list = mask_s_filtered.permute(1,0,2,3)
-        
-        img_s_list = img_s_list.numpy().tolist()
-        mask_s_list = mask_s_list.numpy().tolist()
-
-        img_q, mask_q = img_q.cuda(), mask_q.cuda()
-
-        for k in range(len(img_s_list)):
-            img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
-            img_s_list[k], mask_s_list[k] = img_s_list[k].cuda(), mask_s_list[k].cuda()
-
-        cls = cls[0].item()
-        cls = cls + 1
-
-        with torch.no_grad():
-            pred = model(img_s_list, mask_s_list, img_q, None)[0]
-            pred = torch.argmax(pred, dim=1)
-
-        pred[pred == 1] = cls
-        mask_q[mask_q == 1] = cls
-
-        metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
+        metric = predict(model, metric, img_s_filtered.clone(), mask_s_filtered.clone(), img_q.clone(), mask_q.clone(), cls )
+        metric_normal = predict(model, metric_normal, img_s_list.clone(), mask_s_list.clone(), img_q.clone(), mask_q.clone(), cls )
 
         tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
-        if i > 10 : 
+        tbar.set_description("Testing mIOU: %.2f" % (metric_normal.evaluate() * 100.0))
+        if i > 5 : 
             break 
 
     return metric.evaluate() * 100.0

@@ -105,7 +105,6 @@ def evaluate(model, dataloader, args):
             print('everything is bad')
             continue 
 
-
         img_s_list_new = img_s_list.clone()
         mask_s_list_new = mask_s_list.clone()
 
@@ -120,12 +119,21 @@ def evaluate(model, dataloader, args):
         metric = predict(model, metric, img_s_filtered.clone(), mask_s_filtered.clone(), img_q.clone(), mask_q.clone(), cls )
         metric_normal = predict(model, metric_normal, img_s_list.clone(), mask_s_list.clone(), img_q.clone(), mask_q.clone(), cls )
 
-        tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
-        tbar.set_description("Testing mIOU: %.2f" % (metric_normal.evaluate() * 100.0))
-        if i > 5 : 
+        # tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
+        # tbar.set_description("Testing mIOU: %.2f" % (metric_normal.evaluate() * 100.0))
+        if metric_normal.evaluate() > metric.evaluate() : 
+            print('-----------')
+            print(metric.evaluate()*100, metric_normal.evaluate()*100)
+            print(similarities, 'similarities', similarities.shape)
+            print(_)
+            print(id_q)
+            print('-----------')
+
+        if i > 10 : 
             break 
 
-    return metric.evaluate() * 100.0
+    return metric.evaluate() * 100.0, metric_normal.evaluate()*100
+
 
 def main():
     args = parse_args()
@@ -175,17 +183,20 @@ def main():
 
     print('\nEvaluating on 5 seeds.....')
     total_miou = 0.0
+    total_miou_normal = 0.0 
     model.eval()
     best_model.eval()
     for seed in range(5):
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 
-        miou = evaluate(best_model, testloader, args)
+        miou, miou_normal = evaluate(best_model, testloader, args)
         total_miou += miou
+        total_miou_normal += miou_normal
 
     print('\n' + '*' * 32)
     print('Averaged mIOU on 5 seeds: %.2f' % (total_miou / 5))
+    print('Averaged mIOU on 5 seeds: %.2f' % (total_miou_normal / 5))
     print('*' * 32 + '\n')
 
 

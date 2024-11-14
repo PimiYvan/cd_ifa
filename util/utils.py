@@ -35,7 +35,7 @@ class mIOU:
             for lp, lt in zip(predictions, gts):
                 self.intersection += np.sum(np.logical_and(lp.flatten(), lt.flatten()))
                 self.union += np.sum(np.logical_or(lp.flatten(), lt.flatten()))
-
+        return 
 
     def evaluate(self):
         if self.num_classes > 1:

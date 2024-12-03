@@ -14,6 +14,7 @@ from data.lung_IFA import DatasetLungIFA
 from data.fss_IFA import DatasetFSSIFA
 
 from data.deepglobe_dist import DatasetDeepglobeDist
+from data.deepglobe_dist_2 import DatasetDeepglobeDist2
 from data.fss_dist import DatasetFSSDist
 from data.isic_dist import DatasetISICDist
 from data.lung_dist import DatasetLungDist
@@ -34,6 +35,7 @@ class FSSDataset:
             'lungifa': DatasetLungIFA,
             'fssifa': DatasetFSSIFA,
             'deepglobedist': DatasetDeepglobeDist,
+            'deepglobedist2': DatasetDeepglobeDist2,
             'fssdist': DatasetFSSDist,
             'isicdist': DatasetISICDist,
             'lungdist': DatasetLungDist,

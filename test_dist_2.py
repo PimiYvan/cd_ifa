@@ -8,7 +8,6 @@ from torch.nn import DataParallel
 from tqdm import tqdm
 import glob
 from data.dataset import FSSDataset
-from util.cosine import cosineSimilarity
 
 def parse_args():
     parser = argparse.ArgumentParser(description='IFA for CD-FSS')
@@ -44,31 +43,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def predict(model, metric, img_s_list_clone, mask_s_list_clone, img_q, mask_q, cls ):
-    img_s_list = img_s_list_clone.permute(1,0,2,3,4)
-    mask_s_list = mask_s_list_clone.permute(1,0,2,3)
-    
-    img_s_list = img_s_list.numpy().tolist()
-    mask_s_list = mask_s_list.numpy().tolist()
-
-    img_q, mask_q = img_q.cuda(), mask_q.cuda()
-
-    for k in range(len(img_s_list)):
-        img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
-        img_s_list[k], mask_s_list[k] = img_s_list[k].cuda(), mask_s_list[k].cuda()
-
-    cls = cls[0].item()
-    cls = cls + 1
-
-    with torch.no_grad():
-        pred = model(img_s_list, mask_s_list, img_q, None)[0]
-        pred = torch.argmax(pred, dim=1)
-
-    pred[pred == 1] = cls
-    mask_q[mask_q == 1] = cls
-
-    metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
-    return metric 
 
 def evaluate(model, dataloader, args):
     tbar = tqdm(dataloader)
@@ -83,64 +57,44 @@ def evaluate(model, dataloader, args):
         num_classes = 1
 
     metric = mIOU(num_classes)
-    metric_normal = mIOU(num_classes)
 
-    cosine = cosineSimilarity()
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
-        similarities = cosine.compute_scores(img_s_list, img_q)
-        # print(similarities, 'similarities', similarities.shape)
-        # print(_)
-        # print(id_q)
-        indices = torch.nonzero(similarities < 0.50).squeeze()
-        # print(indices)  # Output: tensor([0, 3])
-        # print(img_s_list.shape, mask_s_list.shape, 'check')
-        if indices.dim() == 1:
-            unique_indices = torch.unique(indices)
-        else:
-            # If indices is 2-dimensional, access the second column as before
-            unique_indices = torch.unique(indices[:, 1])
+
+        img_s_list = img_s_list.permute(1,0,2,3,4)
+        mask_s_list = mask_s_list.permute(1,0,2,3)
             
-        length = len(unique_indices)
-        if length == args.shot:
-            print('everything is bad')
-            continue 
+        img_s_list = img_s_list.numpy().tolist()
+        mask_s_list = mask_s_list.numpy().tolist()
 
-        img_s_list_new = img_s_list.clone()
-        mask_s_list_new = mask_s_list.clone()
+        img_q, mask_q = img_q.cuda(), mask_q.cuda()
 
-        mask_img = torch.ones(img_s_list_new.size(1), dtype=bool)
-        mask_img[unique_indices] = False
-        img_s_filtered = img_s_list_new[:, mask_img, :, :, :]
+        for k in range(len(img_s_list)):
+            img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
+            img_s_list[k], mask_s_list[k] = img_s_list[k].cuda(), mask_s_list[k].cuda()
 
-        mask_masks = torch.ones(mask_s_list_new.size(1), dtype=bool)
-        mask_masks[unique_indices] = False
-        mask_s_filtered = mask_s_list_new[:, mask_masks, :, :]
+        cls = cls[0].item()
+        cls = cls + 1
 
-        metric = predict(model, metric, img_s_filtered.clone(), mask_s_filtered.clone(), img_q.clone(), mask_q.clone(), cls )
-        metric_normal = predict(model, metric_normal, img_s_list.clone(), mask_s_list.clone(), img_q.clone(), mask_q.clone(), cls )
+        with torch.no_grad():
+            pred = model(img_s_list, mask_s_list, img_q, None)[0]
+            pred = torch.argmax(pred, dim=1)
 
-        # tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
-        # tbar.set_description("Testing mIOU: %.2f" % (metric_normal.evaluate() * 100.0))
-        if metric_normal.evaluate() > metric.evaluate() : 
-            print('-----------')
-            print(metric.evaluate()*100, metric_normal.evaluate()*100)
-            print(similarities, 'similarities', similarities.shape)
-            print(_)
-            print(id_q)
-            print('-----------')
+        pred[pred == 1] = cls
+        mask_q[mask_q == 1] = cls
 
-        if i > 10 : 
-            break 
+        metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
 
-    return metric.evaluate() * 100.0, metric_normal.evaluate()*100
+        tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
 
+    return metric.evaluate() * 100.0
 
 def main():
     args = parse_args()
     print('\n' + str(args))
 
     FSSDataset.initialize(img_size=400, datapath=args.data_root)
-    testloader = FSSDataset.build_dataloader(args.dataset, args.batch_size, 4, '0', 'val', args.shot)
+    test_dataset = args.dataset+'dist2'
+    testloader = FSSDataset.build_dataloader(test_dataset, args.batch_size, 4, '0', 'val', args.shot)
 
     model = IFA_MatchingNet(args.backbone, args.refine)
 
@@ -183,20 +137,17 @@ def main():
 
     print('\nEvaluating on 5 seeds.....')
     total_miou = 0.0
-    total_miou_normal = 0.0 
     model.eval()
     best_model.eval()
     for seed in range(5):
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 
-        miou, miou_normal = evaluate(best_model, testloader, args)
+        miou = evaluate(best_model, testloader, args)
         total_miou += miou
-        total_miou_normal += miou_normal
 
     print('\n' + '*' * 32)
-    print('Averaged mIOU on 5 seeds custom : %.2f' % (total_miou / 5))
-    print('Averaged mIOU on 5 seeds normal : %.2f' % (total_miou_normal / 5))
+    print('Averaged mIOU on 5 seeds: %.2f' % (total_miou / 5))
     print('*' * 32 + '\n')
 
 

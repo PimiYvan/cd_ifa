@@ -7,18 +7,16 @@ import torch.nn.functional as F
 import torch
 import PIL.Image as Image
 import numpy as np
-
-import albumentations as A
-import random
+from util.cosine import cosineSimilarity
 
 
-class DatasetDeepglobeIFA(Dataset):
-    def __init__(self, datapath, fold, transform, split, shot, num=6):
+class DatasetDeepglobeDist2(Dataset):
+    def __init__(self, datapath, fold, transform, split, shot, num=600):
         self.split = split
         self.benchmark = 'deepglobe'
         self.shot = shot
         self.num = num
-
+        self.cosine = cosineSimilarity()
 
         self.base_path = os.path.join(datapath, 'Deepglobe', '04_train_cat')
 
@@ -29,55 +27,26 @@ class DatasetDeepglobeIFA(Dataset):
 
         self.transform = transform
 
-        self.q_transform = A.Compose([
-            A.HorizontalFlip(p=0.8),
-            A.VerticalFlip(p=0.8),
-            A.RandomRotate90(),
-            A.RandomGridShuffle(grid=(2,2),always_apply=False,p=1)
-        ])
-
-        self.q_transform2 = A.Compose([
-            A.RandomBrightnessContrast(p=0.5),
-            A.HueSaturationValue(hue_shift_limit=20,sat_shift_limit=30,val_shift_limit=20,always_apply=False,p=1)
-        ])
-
     def __len__(self):
         return self.num
 
     def __getitem__(self, idx):
-        query_name, support_names, class_sample = self.sample_episode(idx)
-        query_img_test, query_mask_test, support_imgs, support_masks = self.load_frame(query_name, support_names)
+        # query_name, support_names, class_sample = self.sample_episode(idx)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 3)
+        query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
-        if self.shot == 1:
-            idx = 0
-        else:
-            idx = random.randint(0, self.shot-1)
-        q_img = support_imgs[idx]
-        q_img = np.array(q_img)
-        q_mask = support_masks[idx]
-        q_mask = np.array(Image.open(q_mask).convert('L'))
-        pair_transform = self.q_transform(image=q_img, mask=q_mask)
-        query_img = pair_transform['image']
-        query_mask = pair_transform['mask']
-        q_img_transform = self.q_transform2(image=query_img)
-        query_img = q_img_transform['image']
-        query_img = Image.fromarray(query_img)
         query_img = self.transform(query_img)
-        query_mask = self.process_mask(query_mask)
         query_mask = F.interpolate(query_mask.unsqueeze(0).unsqueeze(0).float(), query_img.size()[-2:], mode='nearest').squeeze()
-        query_mask = query_mask.long()
 
         support_imgs = torch.stack([self.transform(support_img) for support_img in support_imgs])
 
         support_masks_tmp = []
         for smask in support_masks:
-            smask = self.read_mask(smask)
             smask = F.interpolate(smask.unsqueeze(0).unsqueeze(0).float(), support_imgs.size()[-2:], mode='nearest').squeeze()
             support_masks_tmp.append(smask)
         support_masks = torch.stack(support_masks_tmp)
 
         return support_imgs, support_masks, query_img, query_mask, class_sample, support_names, query_name
-
 
     def load_frame(self, query_name, support_names):
         query_img = Image.open(query_name).convert('RGB')
@@ -86,23 +55,28 @@ class DatasetDeepglobeIFA(Dataset):
         query_id = query_name.split('/')[-1].split('.')[0]
         q_msk_id = query_name.split('/')[-1][:-11] + '_mask_' + query_name.split('/')[-1][-6:-4]
         ann_path = os.path.join(self.base_path, query_name.split('/')[-4], 'test', 'groundtruth')
+        # query_name = os.path.join(ann_path, query_id) + '.png'
         query_name = os.path.join(ann_path, q_msk_id) + '.png'
         support_ids = [name.split('/')[-1].split('.')[0] for name in support_names]
         s_msk_ids = [name.split('/')[-1][:-11] + '_mask_' + name.split('/')[-1][-6:-4] for name in  support_names]
-        support_names = [os.path.join(ann_path, sid) + '.png' for name, sid in zip(support_names, s_msk_ids)]
-
+        # support_names = [os.path.join(ann_path, sid) + '.png' for name, sid in zip(support_names, support_ids)]
+        
+        # one_support = support_names[0]
+        # ann_path_support = os.path.join(self.base_path, one_support.split('/')[-4], 'test', 'groundtruth')
+        # support_names = [os.path.join(ann_path_support, sid) + '.png' for name, sid in zip(support_names, s_msk_ids)]
+        new_support_names = []
+        for name, sid in zip(support_names, s_msk_ids):
+            # one_support = 
+            ann_path_support = os.path.join(self.base_path, name.split('/')[-4], 'test', 'groundtruth')
+            new_support_names.append(os.path.join(ann_path_support, sid) + '.png')
+        # print(new_support_names, 'in the load frames')
         query_mask = self.read_mask(query_name)
+        support_masks = [self.read_mask(name) for name in new_support_names]
 
-        return query_img, query_mask, support_imgs, support_names
+        return query_img, query_mask, support_imgs, support_masks
 
     def read_mask(self, img_name):
         mask = torch.tensor(np.array(Image.open(img_name).convert('L')))
-        mask[mask < 128] = 0
-        mask[mask >= 128] = 1
-        return mask
-    
-    def process_mask(self, img):
-        mask = torch.tensor(img)
         mask[mask < 128] = 0
         mask[mask >= 128] = 1
         return mask
@@ -120,6 +94,28 @@ class DatasetDeepglobeIFA(Dataset):
 
         return query_name, support_names, class_id
 
+    def sample_episode_with_distractor(self, idx, num_distractor=1):
+        class_id = idx % len(self.class_ids)
+        class_sample = self.categories[class_id]
+        # print(class_sample, class_id, 'class sample', self.categories)
+
+        query_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+        support_names = []
+        if num_distractor < self.shot : 
+            while True:  
+                support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+                if query_name != support_name: support_names.append(support_name)
+                if len(support_names) == (self.shot - num_distractor): break
+
+        # Sample distractor images from different categories
+        distractor_names = []
+        while len(distractor_names) < num_distractor:
+            distractor_class_sample = np.random.choice([cid for cid in self.categories if cid != class_sample], 1, replace=False)[0]
+            distractor_name = np.random.choice(self.img_metadata_classwise[distractor_class_sample], 1, replace=False)[0]
+            distractor_names.append(distractor_name)
+
+        support_names.extend(distractor_names)
+        return query_name, support_names, class_id
 
     def build_img_metadata_classwise(self):
         img_metadata_classwise = {}

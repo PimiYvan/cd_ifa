@@ -59,6 +59,9 @@ def evaluate(model, dataloader, args):
     metric = mIOU(num_classes)
 
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
+        print(_, id_q)
+        if i > 5 : 
+          break
 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)

@@ -32,7 +32,10 @@ class DatasetDeepglobeDist2(Dataset):
 
     def __getitem__(self, idx):
         # query_name, support_names, class_sample = self.sample_episode(idx)
-        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 0)
+        if len(support_names) == 0:
+            return [None, None, None, None, None, None, None]
+
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
         query_img = self.transform(query_img)
@@ -102,33 +105,54 @@ class DatasetDeepglobeDist2(Dataset):
         query_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
         support_names = []
         # similarities = self.cosine.compute_scores(img_s_list, img_q)
-
-        if num_distractor < self.shot : 
-            trial = 0 
-            while True:  
-                support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
-                similarities = self.cosine.compute_scores(support_name, query_name)
-                # print(support_name, query_name, 'check', similarities)
-                if trial < 10 and similarities.item() < 0.5 :
-                # if similarities.item() < 0.5 : # infinite loop 
-                    trial += 1
-                    continue 
-                if query_name != support_name: support_names.append(support_name)
-                if len(support_names) == (self.shot - num_distractor): break
-
-        # Sample distractor images from different categories
         distractor_names = []
-        while len(distractor_names) < num_distractor:
-            distractor_class_sample = np.random.choice([cid for cid in self.categories if cid != class_sample], 1, replace=False)[0]
-            distractor_name = np.random.choice(self.img_metadata_classwise[distractor_class_sample], 1, replace=False)[0]
-            similarities = self.cosine.compute_scores(distractor_name, query_name)
-            # print(similarities, 'in the distractor')
-            # if similarities.item() > 0.5 : 
-            #   continue 
-            distractor_names.append(distractor_name)
-
-        support_names.extend(distractor_names)
+        non_distractors = []
+        for i in range(10):
+            support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+            similarities = self.cosine.compute_scores(support_name, query_name)
+            if similarities.item() < 0.5 :
+                if len(distractor_names) < num_distractor:
+                    distractor_names.append(support_name)
+                else:
+                    continue 
+            else:
+                if len(non_distractors) < self.shot - num_distractor:
+                    non_distractors.append(support_name)
+                else:
+                    continue 
+            if len(distractor_names) == num_distractor and len(non_distractors) == self.shot-num_distractor:
+                # break 
+                support_names.append(distractor_names)
+                support_names.append(non_distractors)
+                break 
+        
         return query_name, support_names, class_id
+        # if num_distractor < self.shot : 
+        #     trial = 0 
+        #     while True:  
+        #         support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
+        #         similarities = self.cosine.compute_scores(support_name, query_name)
+        #         # print(support_name, query_name, 'check', similarities)
+        #         # if trial < 10 and similarities.item() < 0.5 :
+        #         if similarities.item() < 0.5 : # infinite loop 
+        #             # trial += 1
+        #             continue 
+        #         if query_name != support_name: support_names.append(support_name)
+        #         if len(support_names) == (self.shot - num_distractor): break
+
+        # # Sample distractor images from different categories
+        # distractor_names = []
+        # while len(distractor_names) < num_distractor:
+        #     distractor_class_sample = np.random.choice([cid for cid in self.categories if cid != class_sample], 1, replace=False)[0]
+        #     distractor_name = np.random.choice(self.img_metadata_classwise[distractor_class_sample], 1, replace=False)[0]
+        #     # similarities = self.cosine.compute_scores(distractor_name, query_name)
+        #     # print(similarities, 'in the distractor')
+        #     # if similarities.item() > 0.5 : 
+        #     #   continue 
+        #     distractor_names.append(distractor_name)
+
+        # support_names.extend(distractor_names)
+        # return query_name, support_names, class_id
 
     def build_img_metadata_classwise(self):
         img_metadata_classwise = {}

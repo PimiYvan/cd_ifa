@@ -64,8 +64,9 @@ def evaluate(model, dataloader, args):
         # if i > 5 : 
         #   break
         if img_s_list is None:
+            print(img_s_list)
             continue 
-
+        continue 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)
             

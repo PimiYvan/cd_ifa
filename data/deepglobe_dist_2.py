@@ -122,8 +122,8 @@ class DatasetDeepglobeDist2(Dataset):
                     continue 
             if len(distractor_names) == num_distractor and len(non_distractors) == self.shot-num_distractor:
                 # break 
-                support_names.append(distractor_names)
-                support_names.append(non_distractors)
+                support_names.extend(distractor_names)
+                support_names.extend(non_distractors)
                 break 
         
         return query_name, support_names, class_id

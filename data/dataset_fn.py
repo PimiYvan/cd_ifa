@@ -20,6 +20,11 @@ from data.isic_dist import DatasetISICDist
 from data.lung_dist import DatasetLungDist
 
 
+def custom_collate_fn(batch):
+    # Filter out None values
+    batch = [item for item in batch if item is not None]
+    return batch
+
 class FSSDataset:
 
     @classmethod
@@ -58,6 +63,6 @@ class FSSDataset:
         nworker = nworker if split == 'trn' else 0
 
         dataset = cls.datasets[benchmark](cls.datapath, fold=fold, transform=cls.transform, split=split, shot=shot)
-        dataloader = DataLoader(dataset, batch_size=bsz, shuffle=shuffle, num_workers=nworker)
+        dataloader = DataLoader(dataset, batch_size=bsz, shuffle=shuffle, num_workers=nworker, collate_fn=custom_collate_fn)
 
         return dataloader

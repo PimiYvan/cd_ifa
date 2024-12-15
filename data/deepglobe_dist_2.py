@@ -34,7 +34,7 @@ class DatasetDeepglobeDist2(Dataset):
         # query_name, support_names, class_sample = self.sample_episode(idx)
         query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 0)
         if len(support_names) == 0:
-            return [None, None, None, None, None, None, None]
+            return None
 
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 

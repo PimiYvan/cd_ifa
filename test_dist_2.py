@@ -7,7 +7,7 @@ import torch
 from torch.nn import DataParallel
 from tqdm import tqdm
 import glob
-from data.dataset import FSSDataset
+from data.dataset_fn import FSSDataset
 
 def parse_args():
     parser = argparse.ArgumentParser(description='IFA for CD-FSS')
@@ -63,8 +63,8 @@ def evaluate(model, dataloader, args):
         # print(_, id_q)
         # if i > 5 : 
         #   break
+        print(img_s_list)
         if img_s_list is None:
-            print(img_s_list)
             continue 
         continue 
         img_s_list = img_s_list.permute(1,0,2,3,4)
@@ -146,7 +146,7 @@ def main():
     total_miou = 0.0
     model.eval()
     best_model.eval()
-    for seed in range(5):
+    for seed in range(1):
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 

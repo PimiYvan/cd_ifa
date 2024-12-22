@@ -35,7 +35,7 @@ class DatasetDeepglobeDist2(Dataset):
         query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 0)
         # print(len(support_names), 'len', )
         if len(support_names) == 0:
-            f = open('filename.txt', 'a')
+            f = open('query-name.txt', 'a')
             f.write(str(query_name))
             f.close()
             return torch.tensor(1)

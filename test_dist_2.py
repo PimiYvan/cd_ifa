@@ -65,7 +65,10 @@ def evaluate(model, dataloader, args):
         #   break
         # print(data)
         
-        if type(data)!= list and type(data) == str :
+        # if type(data)!= list and type(data) == str :
+        #     print('none', i, data)
+        #     continue 
+        if type(data)!= list and data.item() == 1 :
             print('none', i, data)
             continue 
         img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q = data

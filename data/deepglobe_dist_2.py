@@ -36,7 +36,7 @@ class DatasetDeepglobeDist2(Dataset):
         # print(len(support_names), 'len', )
         if len(support_names) == 0:
             f = open('query-name.txt', 'a')
-            f.write(str(query_name))
+            f.write(str(query_name) + '\n')
             f.close()
             return torch.tensor(1)
 

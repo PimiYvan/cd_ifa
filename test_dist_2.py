@@ -7,7 +7,7 @@ import torch
 from torch.nn import DataParallel
 from tqdm import tqdm
 import glob
-from data.dataset_fn import FSSDataset
+from data.dataset import FSSDataset
 
 def parse_args():
     parser = argparse.ArgumentParser(description='IFA for CD-FSS')
@@ -58,15 +58,21 @@ def evaluate(model, dataloader, args):
 
     metric = mIOU(num_classes)
 
-    for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
+    for i, data in enumerate(tbar):
         # if 
         # print(_, id_q)
         # if i > 5 : 
         #   break
-        print(img_s_list)
-        if img_s_list is None:
+        # print(data)
+        
+        if type(data)!= list and type(data) == str :
+            print('none', i, data)
             continue 
-        continue 
+        img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q = data
+
+        # print(img_s_list.shape, mask_s_list.shape, _)
+        
+        # break 
         img_s_list = img_s_list.permute(1,0,2,3,4)
         mask_s_list = mask_s_list.permute(1,0,2,3)
             

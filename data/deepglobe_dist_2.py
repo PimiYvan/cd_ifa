@@ -33,8 +33,12 @@ class DatasetDeepglobeDist2(Dataset):
     def __getitem__(self, idx):
         # query_name, support_names, class_sample = self.sample_episode(idx)
         query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 0)
+        # print(len(support_names), 'len', )
         if len(support_names) == 0:
-            return None
+            f = open('filename.txt', 'a')
+            f.write(str(query_name))
+            f.close()
+            return torch.tensor(1)
 
         query_img, query_mask, support_imgs, support_masks = self.load_frame(query_name, support_names)
 
@@ -125,7 +129,7 @@ class DatasetDeepglobeDist2(Dataset):
                 support_names.extend(distractor_names)
                 support_names.extend(non_distractors)
                 break 
-        
+        # print(len(support_names), 'ch', len(non_distractors), self.shot-num_distractor)
         return query_name, support_names, class_id
         # if num_distractor < self.shot : 
         #     trial = 0 

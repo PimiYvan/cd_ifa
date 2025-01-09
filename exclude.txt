@@ -1,0 +1,16 @@
+./dataset/Deepglobe/04_train_cat/5/test/origin/170535_sat_20.jpg
+./dataset/Deepglobe/04_train_cat/5/test/origin/170535_sat_20.jpg
+./dataset/Deepglobe/04_train_cat/5/test/origin/170535_sat_20.jpg
+./dataset/Deepglobe/04_train_cat/6/test/origin/794214_sat_01.jpg
+./dataset/Deepglobe/04_train_cat/6/test/origin/698065_sat_34.jpg
+./dataset/Deepglobe/04_train_cat/5/test/origin/343016_sat_14.jpg
+./dataset/Deepglobe/04_train_cat/6/test/origin/194156_sat_22.jpg
+./dataset/Deepglobe/04_train_cat/6/test/origin/457265_sat_25.jpg
+./dataset/Deepglobe/04_train_cat/5/test/origin/476582_sat_31.jpg
+./dataset/Deepglobe/04_train_cat/3/test/origin/343016_sat_15.jpg
+
+
+
+
+
+

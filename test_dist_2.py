@@ -63,17 +63,11 @@ def evaluate(model, dataloader, args):
         # print(_, id_q)
         # if i > 5 : 
         #   break
-        # print(data)
-        
-        # if type(data)!= list and type(data) == str :
-        #     print('none', i, data)
-        #     continue 
-        if type(data)!= list and data.item() == 1 :
-            print('none', i, data)
-            continue 
-        img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q = data
 
-        # print(img_s_list.shape, mask_s_list.shape, _)
+        if type(data)!= list and data.item() == 1 :
+            continue 
+        
+        img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q = data
         
         # break 
         img_s_list = img_s_list.permute(1,0,2,3,4)

@@ -32,7 +32,7 @@ class DatasetDeepglobeDist2(Dataset):
 
     def __getitem__(self, idx):
         # query_name, support_names, class_sample = self.sample_episode(idx)
-        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 0)
+        query_name, support_names, class_sample = self.sample_episode_with_distractor(idx, 1)
         # print(len(support_names), 'len', )
         if len(support_names) == 0:
             f = open('query-name.txt', 'a')

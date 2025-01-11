@@ -149,7 +149,7 @@ def main():
     total_miou = 0.0
     model.eval()
     best_model.eval()
-    for seed in range(1):
+    for seed in range(5):
         print('\nRun %i:' % (seed + 1))
         set_seed(args.seed + seed)
 

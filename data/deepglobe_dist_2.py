@@ -111,7 +111,7 @@ class DatasetDeepglobeDist2(Dataset):
         # similarities = self.cosine.compute_scores(img_s_list, img_q)
         distractor_names = []
         non_distractors = []
-        for i in range(15):
+        for i in range(10):
             support_name = np.random.choice(self.img_metadata_classwise[class_sample], 1, replace=False)[0]
             similarities = self.cosine.compute_scores(support_name, query_name)
             if similarities.item() < 0.5 :

@@ -9,6 +9,7 @@ cd ifa
 python3.10 -m venv env <br/> [mii] loading StdEnv/2023 python/3.10.13
 source env/bin/activate <br/>
 
+mkdir dataset
 cd cd_ifa
 wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 tar -xvf VOCtrainval_11-May-2012.tar

@@ -1,9 +1,16 @@
 
 
-
+0 distractor, 15: 53.38
 
 
 result 
 
 deepglobe 
-0 distractor, 15: 53.38
+10 trial while sampling episode 
+5 shot 
+
+dist/accuracy 
+0  ------- 
+1  ------- 50.39
+
+

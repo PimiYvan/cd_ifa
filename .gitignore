@@ -3,5 +3,6 @@
 /outdir 
 /pretrained
 /trained_models
+/exclude 
 
 query-name.txt

@@ -56,11 +56,11 @@ momemtum/dataset        deepglobe 1 shot    deepglobe 5 shot      fss 1 shot    
 0.0005
 
 bonus
-momentum        lung 5shot      isic 1 shot 
-0.6             78.85
-0.4             80.00
-0.3             79.83           44.91
-0.002                           56.02
+momentum    lung 1shot          lung 5shot                      isic 1 shot 
+0.6         73.99               78.85
+0.4         76.34               80.00
+0.3         76.95               79.83                           44.91
+0.002                                                           56.02
 
 
 './dataset/Deepglobe/04_train_cat/1/test/origin/164029_sat_24.jpg', 

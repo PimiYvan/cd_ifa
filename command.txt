@@ -50,3 +50,9 @@ module spider python/3.9.6
 module load StdEnv/2020
 module load python/3.9.6
 module load python/3.9.6
+
+quota -s
+for checking space 
+
+
+!python -W ignore test.py  --dataset lung --data-root ./dataset --backbone resnet50_vdb --batch-size 96 --shot 1 --refine

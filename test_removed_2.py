@@ -200,7 +200,8 @@ def main():
         # total_miou += miou
 
     print('\n' + '*' * 32)
-    print('Averaged mIOU on 5 seeds: %.2f' % (total_miou / 5))
+    print('Averaged mIOU on 5 seeds custom : %.2f' % (total_miou / 5))
+    print('Averaged mIOU on 5 seeds normal : %.2f' % (total_miou_normal / 5))
     print('*' * 32 + '\n')
 
 

@@ -120,10 +120,11 @@ def evaluate(model, dataloader, args):
         metric_normal = predict(model, metric_normal, img_s_list.clone(), mask_s_list.clone(), img_q.clone(), mask_q.clone(), cls )
         if metric_normal.evaluate() > metric.evaluate() : 
             print('-----------')
-            print(metric.evaluate()*100, metric_normal.evaluate()*100)
-            print(similarities, 'similarities', similarities.shape)
-            print(_)
-            print(id_q)
+            print('custom', metric.evaluate()*100 )
+            print('normal', metric_normal.evaluate()*100)
+            # print(similarities, 'similarities', similarities.shape)
+            # print(_)
+            # print(id_q)
             print('-----------')
 
         if i > 10 : 

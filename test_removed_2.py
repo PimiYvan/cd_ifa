@@ -72,7 +72,7 @@ def evaluate(model, dataloader, args):
         mask[min_index] = False
         # print(mask, 'mask')
 
-        if values[min_index.item()].item() < 0.5 : 
+        if values[min_index.item()].item() < 0.4 : 
         #   print(values[min_index.item()].item(), 'delete')
           img_s_filtered = img_s_list_new[:, mask, :, :, :]
           mask_s_filtered = mask_s_list_new[:, mask, :, :]
@@ -81,11 +81,6 @@ def evaluate(model, dataloader, args):
           mask_s_filtered = mask_s_list_new.clone()
           
         # print(img_s_filtered.shape, mask_s_filtered.shape, 'wiw')
-
-
-
-        # img_s_list = img_s_list.permute(1,0,2,3,4)
-        # mask_s_list = mask_s_list.permute(1,0,2,3)
 
         img_s_list = img_s_filtered.permute(1,0,2,3,4)
         mask_s_list = mask_s_filtered.permute(1,0,2,3)

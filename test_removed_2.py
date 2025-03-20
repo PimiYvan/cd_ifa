@@ -108,28 +108,12 @@ def evaluate(model, dataloader, args):
           mask_s_filtered = mask_s_list_new.clone()
           
         # print(img_s_filtered.shape, mask_s_filtered.shape, 'wiw')
+        # img_s_list = img_s_filtered.permute(1,0,2,3,4)
+        # mask_s_list = mask_s_filtered.permute(1,0,2,3)
+        # img_s_list = img_s_list.numpy().tolist()
+        # mask_s_list = mask_s_list.numpy().tolist()
+        # img_q, mask_q = img_q.cuda(), mask_q.cuda()
 
-        img_s_list = img_s_filtered.permute(1,0,2,3,4)
-        mask_s_list = mask_s_filtered.permute(1,0,2,3)
-        
-        img_s_list = img_s_list.numpy().tolist()
-        mask_s_list = mask_s_list.numpy().tolist()
-
-        img_q, mask_q = img_q.cuda(), mask_q.cuda()
-
-        # for k in range(len(img_s_list)):
-        #     img_s_list[k], mask_s_list[k] = torch.Tensor(img_s_list[k]), torch.Tensor(mask_s_list[k])
-        #     img_s_list[k], mask_s_list[k] = img_s_list[k].cuda(), mask_s_list[k].cuda()
-
-        # cls = cls[0].item()
-        # cls = cls + 1
-
-        # with torch.no_grad():
-        #     pred = model(img_s_list, mask_s_list, img_q, None)[0]
-        #     pred = torch.argmax(pred, dim=1)
-
-        # pred[pred == 1] = cls
-        # mask_q[mask_q == 1] = cls
 
         # metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
         metric = predict(model, metric, img_s_filtered.clone(), mask_s_filtered.clone(), img_q.clone(), mask_q.clone(), cls )

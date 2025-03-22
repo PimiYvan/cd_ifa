@@ -88,7 +88,6 @@ def evaluate(model, dataloader, args):
     cosine = cosineSimilarity()
     for i, (img_s_list, mask_s_list, img_q, mask_q, cls, _, id_q) in enumerate(tbar):
         similarities = cosine.compute_scores(img_s_list, img_q)
-        # print(similarities.squeeze())
         values = similarities.squeeze()
 
         img_s_list_new = img_s_list.clone()
@@ -100,19 +99,11 @@ def evaluate(model, dataloader, args):
         # print(mask, 'mask')
 
         if values[min_index.item()].item() < 0.4 : 
-        #   print(values[min_index.item()].item(), 'delete')
           img_s_filtered = img_s_list_new[:, mask, :, :, :]
           mask_s_filtered = mask_s_list_new[:, mask, :, :]
         else:
           img_s_filtered = img_s_list_new.clone()
           mask_s_filtered = mask_s_list_new.clone()
-          
-        # print(img_s_filtered.shape, mask_s_filtered.shape, 'wiw')
-        # img_s_list = img_s_filtered.permute(1,0,2,3,4)
-        # mask_s_list = mask_s_filtered.permute(1,0,2,3)
-        # img_s_list = img_s_list.numpy().tolist()
-        # mask_s_list = mask_s_list.numpy().tolist()
-        # img_q, mask_q = img_q.cuda(), mask_q.cuda()
 
 
         # metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())

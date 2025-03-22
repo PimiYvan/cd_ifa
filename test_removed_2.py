@@ -109,17 +109,17 @@ def evaluate(model, dataloader, args):
         # metric.add_batch(pred.cpu().numpy(), mask_q.cpu().numpy())
         metric = predict(model, metric, img_s_filtered.clone(), mask_s_filtered.clone(), img_q.clone(), mask_q.clone(), cls )
         metric_normal = predict(model, metric_normal, img_s_list.clone(), mask_s_list.clone(), img_q.clone(), mask_q.clone(), cls )
-        if metric_normal.evaluate() > metric.evaluate() : 
-            print('-----------')
-            print('custom', metric.evaluate()*100 )
-            print('normal', metric_normal.evaluate()*100)
-            # print(similarities, 'similarities', similarities.shape)
-            # print(_)
-            # print(id_q)
-            print('-----------')
+        # if metric_normal.evaluate() > metric.evaluate() : 
+        #     print('-----------')
+        #     print('custom', metric.evaluate()*100 )
+        #     print('normal', metric_normal.evaluate()*100)
+        #     # print(similarities, 'similarities', similarities.shape)
+        #     # print(_)
+        #     # print(id_q)
+        #     print('-----------')
 
-        if i > 10 : 
-            break 
+        # if i > 10 : 
+        #     break 
 
         # tbar.set_description("Testing mIOU: %.2f" % (metric.evaluate() * 100.0))
         # if i > 1 : 

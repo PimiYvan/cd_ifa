@@ -7,6 +7,7 @@ chmod +x dataset.sh
 cd ifa
 
 python3.10 -m venv env <br/> [mii] loading StdEnv/2023 python/3.10.13
+python -m venv env <br/> [mii] loading StdEnv/2023 python/3.10.13
 source env/bin/activate <br/>
 
 mkdir dataset
@@ -14,12 +15,14 @@ cd cd_ifa
 wget http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
 tar -xvf VOCtrainval_11-May-2012.tar
 mv ./VOCdevkit ./dataset
-mv SegmentationClassAug ./dataset/VOC2012/
 mv ./dataset/VOCdevkit/VOC2012 ./dataset/
 rm ./dataset/VOCdevkit -r
 
 gdown 10zxG2VExoEZUeyQl_uXga2OWHjGeZaf2
 unzip SegmentationClassAug.zip
+mv SegmentationClassAug ./dataset/VOC2012/
+rm VOCtrainval_11-May-2012.tar
+
 
 gdown 16TgqOeI_0P41Eh3jWQlxlRXG9KIqtMgI
 unzip fewshot_data.zip
@@ -43,8 +46,8 @@ gdown 1kUEFWv-DByaH5zuBBgN_v1XnI3Jn3GYi
 unzip deeplobe_ifa.zip
 rm deeplobe_ifa.zip
 
-salloc --time=1:0:0 --mem=3G --ntasks=2 --account=def-menna --gres=gpu:1 --nodes=1
-salloc --time=1:0:0 --mem=34G --ntasks=2 --account=rrg-menna --gres=gpu:1 --nodes=1
+salloc --time=1:0:0 --mem=3G --ntasks=2 --account=def-menna-ab --gres=gpu:1 --nodes=1
+salloc --time=1:0:0 --mem=34G --ntasks=2 --account=rrg-menna-ab --gres=gpu:1 --nodes=1
 
 pip install -U git+https://github.com/albu/albumentations
 

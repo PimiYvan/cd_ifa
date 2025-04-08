@@ -1,0 +1,8 @@
+
+
+
+
+deepglobe, we remove one element 
+conditional removed < 0.4 one value : 55.42, shot : 5, bs 1
+default value : 55.50, shot : 5, bs 1
+

@@ -56,3 +56,5 @@ for checking space
 
 
 !python -W ignore test.py  --dataset lung --data-root ./dataset --backbone resnet50_vdb --batch-size 96 --shot 1 --refine
+
+df -h 

@@ -1,8 +1,11 @@
 
 
 
+shot : 5, bs 1
+deepglobe, we remove one element  shot : 5, bs 1
+default value : 55.50 
+conditional removed < 0.4 one value : 55.42
+we remove the last element, the less similar : 55.20
+we randomly distract one value in the item : 51.15
 
-deepglobe, we remove one element 
-conditional removed < 0.4 one value : 55.42, shot : 5, bs 1
-default value : 55.50, shot : 5, bs 1
 

@@ -14,5 +14,6 @@ fss, shot 5, bs 1
 defaut vaule : 82.09
 conditional removed < 0.4: 82.12
 fully removed the lower probability : 82.14 == 4 shot 
-distractor of 1 element : 68.54
-distractor of 2 element : 68.54
+distractor of 1 element : 81.76 
+distractor of 2 element : 
+distractor of 5 element : 68.54

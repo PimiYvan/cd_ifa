@@ -27,7 +27,8 @@ cedar
 58676039 # distractor fss 1 element 
 58923629 # distractor fss 2 element 
 59210668 # deepglobe 3 shot 
-
+59210823 # deepglobe 3 shot 
+59210957 # deepglobe 3 shot 
 beluga 
 53798296
 

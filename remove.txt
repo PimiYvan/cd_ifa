@@ -19,7 +19,7 @@ fss, shot 5, bs 1
 defaut test vaule : 82.09
 we conditionaly removed < 0.4 the less similar element : 82.12
 fully removed the lower probability : 82.14 == 4 shot 
-fully removed the 2 lower probability :  == 3 shot 
+fully removed the 2 lower probability : 82.09 == 3 shot 
 
 distractor of 1 element : 81.76 
 distractor of 2 element : 81.08

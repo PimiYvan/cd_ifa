@@ -12,7 +12,7 @@ we removed the 3 last similar element : 53.72 == 2 shot
 
 we randomly distract(replace) 1 value in the item : 51.15
 we randomly distract(replace) 2 value in the item : 46.77
-we randomly distract(replace) 3 value in the item : 
+we randomly distract(replace) 3 value in the item : 40.35
 
 
 ----------
@@ -25,7 +25,7 @@ fully removed the 3 lower probability : 81.92 == 2 shot
 
 distractor of 1 element : 81.76 
 distractor of 2 element : 81.08
-distractor of 3 element : 
+distractor of 3 element : 80.00
 
 
 distractor of 5 element : 68.54

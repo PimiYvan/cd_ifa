@@ -19,6 +19,8 @@ graham
 59588134 : fss with 2 shot 
 59640817 : deepglobe with 2 shot 
 59701483 : fss with 2 shot 
+59997779 : deepglobe distract 3 
+59997848 : fss distract 3 
 
 cedar 
 58165830 

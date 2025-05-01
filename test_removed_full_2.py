@@ -94,7 +94,7 @@ def evaluate(model, dataloader, args):
         mask_s_list_new = mask_s_list.clone()
 
         # Get the indices of the two smallest values
-        min_indices = torch.topk(values, k=3, largest=False).indices
+        min_indices = torch.topk(values, k=4, largest=False).indices
 
         # Create a mask with all True values
         mask = torch.ones(img_s_list.size(1), dtype=bool)

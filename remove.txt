@@ -9,7 +9,7 @@ conditional removed < 0.4 one value : 55.42
 we removed the last similar element : 55.20 == 4 shot 
 we removed the 2 last similar element : 54.77 == 3 shot 
 we removed the 3 last similar element : 53.72 == 2 shot 
-we removed the 4 last similar element : == 1 shot 
+we removed the 4 last similar element : 50.25 == 1 shot 
 
 we randomly distract(replace) 1 value in the item : 51.15
 we randomly distract(replace) 2 value in the item : 46.77
@@ -24,10 +24,15 @@ we conditionaly removed < 0.4 the less similar element : 82.12
 fully removed the lower probability : 82.14 == 4 shot 
 fully removed the 2 lower probability : 82.09 == 3 shot 
 fully removed the 3 lower probability : 81.92 == 2 shot 
-we removed the 4 last similar element : == 1 shot 
+we removed the 4 last similar element : 81.26 == 1 shot 
 
 distractor of 1 element : 81.76 
 distractor of 2 element : 81.08
 distractor of 3 element : 80.00
 distractor of 4 element : 77.31
 distractor of 5 element : 68.54
+
+----
+1 shot, 1 bs 
+deepglobe : 44.69
+fss : 79.80

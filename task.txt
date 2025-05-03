@@ -40,7 +40,11 @@ cedar
 59211697 # deepglobe dist
 59216010 # deepglobe dist 1 
 59263321 # fss rm 2 full 
-
+60172271 : fss 1 shot 
+60172272 : deepglobe 1 shot 
+60179992 : fss 1 shot normal 
+60179994 : deepglobe 1 shot normal 
+60181191 : fss 1 shot normal 
 beluga 
 53798296
 

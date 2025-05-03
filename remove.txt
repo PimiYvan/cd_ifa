@@ -14,6 +14,7 @@ we removed the 4 last similar element : == 1 shot
 we randomly distract(replace) 1 value in the item : 51.15
 we randomly distract(replace) 2 value in the item : 46.77
 we randomly distract(replace) 3 value in the item : 40.35
+we randomly distract(replace) 4 value in the item : 32.03
 
 
 ----------
@@ -28,6 +29,5 @@ we removed the 4 last similar element : == 1 shot
 distractor of 1 element : 81.76 
 distractor of 2 element : 81.08
 distractor of 3 element : 80.00
-
-
+distractor of 4 element : 77.31
 distractor of 5 element : 68.54
